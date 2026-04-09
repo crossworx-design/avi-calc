@@ -1,0 +1,1703 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AVI Volendam — Calculatiemodule</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy: #74c4d6;
+  --navy-mid: #5ab5ca;
+  --navy-light: #3ea8c0;
+  --orange: #74c4d6;
+  --orange-light: #025a7a;
+  --white: #ffffff;
+  --off-white: #f4f8fa;
+  --gray-100: #edf3f6;
+  --gray-200: #ccdde4;
+  --gray-400: #7a9eae;
+  --gray-600: #3d6878;
+  --green: #2d8a4e;
+  --red: #c0392b;
+  --text: #1f2933;
+  --radius: 6px;
+  --shadow: 0 2px 8px rgba(2,90,122,.10);
+  --shadow-lg: 0 8px 32px rgba(2,90,122,.16);
+  --accent: #74c4d6;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Poppins', sans-serif;
+  font-size: 14px;
+  background: var(--off-white);
+  color: var(--text);
+  min-height: 100vh;
+}
+
+/* ── HEADER ── */
+.header {
+  background: var(--navy);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 32px;
+  height: 80px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: var(--shadow-lg);
+}
+.header-brand { display: flex; align-items: center; gap: 20px; }
+.header-logo {
+  width: 36px; height: 36px; background: var(--orange);
+  border-radius: 6px; display: flex; align-items: center; justify-content: center;
+  font-weight: 700; font-size: 15px; letter-spacing: -.5px;
+}
+.header-title { font-size: 18px; font-weight: 700; color: #ffffff; letter-spacing: 1.5px; text-transform: uppercase; }
+.header-sub { font-size: 11px; color: rgba(255,255,255,0.85); margin-top: 3px; letter-spacing: 1px; text-transform: uppercase; font-weight: 500; }
+.header-date { font-family: 'Poppins', sans-serif; font-size: 11px; color: rgba(255,255,255,0.75); position: absolute; right: 32px; }
+.header-center { position: absolute; left: 50%; transform: translateX(-50%); text-align: center; pointer-events: none; }
+
+/* ── NAV ── */
+.nav {
+  background: #025a7a;
+  display: flex;
+  padding: 0 32px;
+  border-bottom: 2px solid #025a7a;
+}
+.nav-btn {
+  padding: 14px 24px;
+  background: none;
+  border: none;
+  color: rgba(255,255,255,0.75);
+  font-family: 'Poppins', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: .3px;
+  cursor: pointer;
+  position: relative;
+  transition: color .2s;
+  text-transform: uppercase;
+}
+.nav-btn:hover { color: #ffffff; }
+.nav-btn.active { color: #ffffff; font-weight: 700; }
+.nav-btn.active::after {
+  content: '';
+  position: absolute;
+  bottom: -2px; left: 0; right: 0; height: 2px;
+  background: #025a7a;
+}
+
+/* ── LAYOUT ── */
+.tab { display: none; padding: 28px 32px; max-width: 1300px; }
+.tab.active { display: block; }
+
+/* ── CARDS ── */
+.card {
+  background: #fff;
+  border-radius: var(--radius);
+  border: 1px solid var(--gray-200);
+  box-shadow: var(--shadow);
+  margin-bottom: 20px;
+}
+.card-header {
+  background: var(--navy);
+  color: #ffffff;
+  padding: 12px 20px;
+  border-radius: var(--radius) var(--radius) 0 0;
+  font-weight: 600;
+  font-size: 13px;
+  letter-spacing: .5px;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.card-body { padding: 20px; }
+
+/* ── GRID ── */
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
+.grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+
+/* ── FORM ELEMENTS ── */
+.field { margin-bottom: 14px; }
+.field label {
+  display: block;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--gray-600);
+  text-transform: uppercase;
+  letter-spacing: .5px;
+  margin-bottom: 5px;
+}
+.field input, .field select {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius);
+  font-family: 'Poppins', sans-serif;
+  font-size: 13px;
+  background: var(--off-white);
+  color: var(--text);
+  transition: border-color .15s;
+}
+.field input:focus, .field select:focus {
+  outline: none;
+  border-color: var(--orange);
+  background: #fff;
+}
+.field .hint {
+  font-size: 10px;
+  color: var(--gray-400);
+  margin-top: 3px;
+}
+
+.radio-group { display: flex; gap: 12px; margin-top: 4px; }
+.radio-group label {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 13px; font-weight: 400; text-transform: none; letter-spacing: 0;
+  color: var(--text); cursor: pointer;
+}
+.radio-group input[type=radio] { width: auto; }
+
+/* ── BUTTONS ── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border-radius: var(--radius);
+  font-family: 'Poppins', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  border: none;
+  transition: all .15s;
+}
+.btn-primary { background: var(--orange); color: #ffffff; font-weight: 600; }
+.btn-primary:hover { background: #5ab5ca; }
+.btn-secondary { background: var(--gray-100); color: var(--text); border: 1px solid var(--gray-200); }
+.btn-secondary:hover { background: var(--gray-200); }
+.btn-danger { background: #fde8e8; color: var(--red); border: 1px solid #f5c6c6; }
+.btn-danger:hover { background: #f5c6c6; }
+.btn-small { padding: 4px 10px; font-size: 12px; }
+.btn-navy { background: #025a7a; color: #fff; }
+.btn-navy:hover { background: #037ca8; }
+
+/* ── TABLES ── */
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+.data-table th {
+  background: var(--gray-100);
+  color: var(--gray-600);
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+  padding: 8px 12px;
+  text-align: left;
+  border-bottom: 2px solid var(--gray-200);
+}
+.data-table td {
+  padding: 9px 12px;
+  border-bottom: 1px solid var(--gray-100);
+  font-family: 'Poppins', sans-serif;
+}
+.data-table td.label-col {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 500;
+}
+.data-table tr:last-child td { border-bottom: none; }
+.data-table tr:hover td { background: var(--off-white); }
+.data-table .num { text-align: right; }
+.data-table .actions { text-align: right; white-space: nowrap; }
+
+.data-table tfoot td {
+  background: var(--navy);
+  color: #ffffff;
+  font-weight: 700;
+  border-top: 2px solid #025a7a;
+}
+
+/* ── RESULT BOX ── */
+.result-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+}
+.result-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 9px 16px;
+  border-bottom: 1px solid var(--gray-100);
+}
+.result-row:last-child { border-bottom: none; }
+.result-row.total {
+  background: #025a7a;
+  color: #fff;
+  font-weight: 700;
+  border-radius: 0 0 var(--radius) var(--radius);
+}
+.result-row .label { color: var(--gray-600); font-size: 12px; }
+.result-row.total .label { color: rgba(255,255,255,.8); }
+.result-row .value {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 600;
+  font-size: 13px;
+}
+.result-row.total .value { font-size: 16px; color: #74c4d6; }
+
+.result-highlight {
+  background: linear-gradient(135deg, #025a7a, #037ca8);
+  color: #fff;
+  border-radius: var(--radius);
+  padding: 20px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.result-highlight .main-value {
+  font-family: 'Poppins', sans-serif;
+  font-size: 32px;
+  font-weight: 600;
+  color: #74c4d6;
+}
+.result-highlight .sub { font-size: 12px; color: rgba(255,255,255,.6); margin-top: 4px; }
+
+/* ── MARGE SLIDER ── */
+.marge-control {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: var(--gray-100);
+  padding: 14px 18px;
+  border-radius: var(--radius);
+  margin-bottom: 16px;
+}
+.marge-control label { font-weight: 600; font-size: 13px; white-space: nowrap; }
+.marge-control input[type=range] { flex: 1; accent-color: var(--orange); }
+.marge-badge {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 700;
+  font-size: 18px;
+  color: #025a7a;
+  min-width: 52px;
+  text-align: right;
+}
+
+/* ── OFFERTE OUTPUT ── */
+.offerte-lang-tabs { display: flex; gap: 2px; margin-bottom: 0; }
+.lang-btn {
+  padding: 7px 16px;
+  background: var(--gray-100);
+  border: 1px solid var(--gray-200);
+  border-bottom: none;
+  border-radius: var(--radius) var(--radius) 0 0;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  color: var(--gray-600);
+}
+.lang-btn.active { background: #fff; color: var(--navy); }
+
+.offerte-preview {
+  background: #fff;
+  border: 1px solid var(--gray-200);
+  padding: 36px 40px;
+  font-family: 'Poppins', sans-serif;
+  font-size: 13px;
+  line-height: 1.7;
+  min-height: 400px;
+}
+.offerte-preview .company-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 32px;
+}
+.offerte-preview .avi-info { text-align: right; font-size: 12px; color: var(--gray-600); }
+.offerte-preview .avi-name { font-weight: 700; font-size: 14px; color: var(--navy); }
+.offerte-preview h2 {
+  color: var(--navy);
+  font-size: 18px;
+  font-weight: 700;
+  margin: 0 0 20px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid var(--orange);
+}
+.offerte-preview .product-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 20px 0;
+  font-size: 13px;
+}
+.offerte-preview .product-table th {
+  background: var(--off-white);
+  padding: 8px 12px;
+  text-align: left;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+  color: var(--gray-600);
+  border-bottom: 1px solid var(--gray-200);
+}
+.offerte-preview .product-table td {
+  padding: 12px;
+  border-bottom: 1px solid var(--gray-100);
+}
+.offerte-preview .product-table .price-col {
+  text-align: right;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 600;
+}
+.offerte-preview .footer-text { font-size: 11px; color: var(--gray-600); margin-top: 24px; }
+
+/* ── STATUS BADGES ── */
+.badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 20px;
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+}
+.badge-ok { background: #d4f4e2; color: var(--green); }
+.badge-warn { background: #fef3cd; color: #856404; }
+.badge-err { background: #fde8e8; color: var(--red); }
+
+/* ── DIVIDER ── */
+.section-title {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .8px;
+  color: #025a7a;
+  margin: 20px 0 12px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--gray-200);
+}
+
+/* ── INLINE INPUT TABLE ── */
+.inline-table input {
+  width: 100%;
+  padding: 5px 8px;
+  border: 1px solid var(--gray-200);
+  border-radius: 4px;
+  font-family: 'Poppins', sans-serif;
+  font-size: 12px;
+  background: var(--off-white);
+}
+.inline-table input:focus { outline: none; border-color: var(--orange); background: #fff; }
+
+/* ── PERCENTAGE BAR ── */
+.pct-bar { height: 4px; background: var(--gray-100); border-radius: 2px; margin-top: 4px; }
+.pct-fill { height: 100%; background: var(--orange); border-radius: 2px; transition: width .3s; }
+.pct-fill.warn { background: #f0a500; }
+.pct-fill.err { background: var(--red); }
+
+/* ── PRINT ── */
+@media print {
+  .header, .nav, .tab:not(#tab-offerte), .print-hide { display: none !important; }
+  #tab-offerte { display: block !important; padding: 0; }
+  .offerte-preview { border: none; box-shadow: none; }
+  .card { box-shadow: none; }
+  .btn { display: none !important; }
+}
+
+/* Scroll */
+.scrollable { max-height: 320px; overflow-y: auto; }
+
+/* ── NOTICE ── */
+.notice {
+  background: linear-gradient(90deg, #eaf7fb, #fff);
+  border-left: 3px solid #025a7a;
+  padding: 10px 14px;
+  font-size: 12px;
+  color: var(--gray-600);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  margin-bottom: 16px;
+}
+
+/* validation */
+.field-error input, .field-error select { border-color: var(--red); }
+.field-error .hint { color: var(--red); }
+.pct-sum-ok { color: var(--green); font-weight: 600; }
+.pct-sum-err { color: var(--red); font-weight: 600; }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="header">
+  <div class="header-brand">
+    <img src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPHN2ZyBpZD0iTGF5ZXJfMSIgZGF0YS1uYW1lPSJMYXllciAxIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB2aWV3Qm94PSIwIDAgMzgwIDE1MCI+CiAgPGRlZnM+CiAgICA8c3R5bGU+CiAgICAgIC5jbHMtMSB7CiAgICAgICAgZmlsbDogIzcyYmFkMTsKICAgICAgfQoKICAgICAgLmNscy0yIHsKICAgICAgICBmaWxsOiAjMDI1YTdhOwogICAgICB9CgogICAgICAuY2xzLTMsIC5jbHMtNCwgLmNscy01IHsKICAgICAgICBpc29sYXRpb246IGlzb2xhdGU7CiAgICAgIH0KCiAgICAgIC5jbHMtNCB7CiAgICAgICAgZmlsbDogdXJsKCNsaW5lYXItZ3JhZGllbnQpOwogICAgICB9CgogICAgICAuY2xzLTQsIC5jbHMtNSB7CiAgICAgICAgbWl4LWJsZW5kLW1vZGU6IG11bHRpcGx5OwogICAgICAgIG9wYWNpdHk6IC42OwogICAgICB9CgogICAgICAuY2xzLTYgewogICAgICAgIHN0cm9rZTogIzcyYmFkMTsKICAgICAgICBzdHJva2UtbWl0ZXJsaW1pdDogMTA7CiAgICAgICAgc3Ryb2tlLXdpZHRoOiA1cHg7CiAgICAgIH0KCiAgICAgIC5jbHMtNiwgLmNscy03IHsKICAgICAgICBmaWxsOiAjZmZmOwogICAgICB9CgogICAgICAuY2xzLTUgewogICAgICAgIGZpbGw6IHVybCgjbGluZWFyLWdyYWRpZW50LTIpOwogICAgICB9CiAgICA8L3N0eWxlPgogICAgPGxpbmVhckdyYWRpZW50IGlkPSJsaW5lYXItZ3JhZGllbnQiIHgxPSI1OS4zOCIgeTE9Ijc3IiB4Mj0iNTkuMzgiIHkyPSI5OC42NyIgZ3JhZGllbnRUcmFuc2Zvcm09InRyYW5zbGF0ZSgwIDE1Mikgc2NhbGUoMSAtMSkiIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIj4KICAgICAgPHN0b3Agb2Zmc2V0PSIwIiBzdG9wLWNvbG9yPSIjZmZmIi8+CiAgICAgIDxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iIzFkMWQxYiIvPgogICAgPC9saW5lYXJHcmFkaWVudD4KICAgIDxsaW5lYXJHcmFkaWVudCBpZD0ibGluZWFyLWdyYWRpZW50LTIiIHgxPSItNTk4MS4wMSIgeTE9IjExMDE1Ljk3IiB4Mj0iLTU5ODEuMDEiIHkyPSIxMTAzNy42NiIgZ3JhZGllbnRUcmFuc2Zvcm09InRyYW5zbGF0ZSgtNTkwNS4zOSAtMTA5NDEpIHJvdGF0ZSgtMTgwKSBzY2FsZSgxIC0xKSIgZ3JhZGllbnRVbml0cz0idXNlclNwYWNlT25Vc2UiPgogICAgICA8c3RvcCBvZmZzZXQ9IjAiIHN0b3AtY29sb3I9IiNmZmYiLz4KICAgICAgPHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjMWQxZDFiIi8+CiAgICA8L2xpbmVhckdyYWRpZW50PgogIDwvZGVmcz4KICA8ZyBjbGFzcz0iY2xzLTMiPgogICAgPGcgaWQ9IkxheWVyXzEtMiIgZGF0YS1uYW1lPSJMYXllciAxIj4KICAgICAgPGc+CiAgICAgICAgPGNpcmNsZSBjbGFzcz0iY2xzLTYiIGN4PSI3Ni4xOCIgY3k9Ijc1IiByPSI2My43OCIvPgogICAgICAgIDxnPgogICAgICAgICAgPHJlY3QgY2xhc3M9ImNscy0yIiB4PSI1My40MiIgeT0iNTMuMzMiIHdpZHRoPSIxMS45MiIgaGVpZ2h0PSI0My4zMyIvPgogICAgICAgICAgPHJlY3QgY2xhc3M9ImNscy0yIiB4PSI2OS42NSIgeT0iNTMuMzMiIHdpZHRoPSIxMS45MiIgaGVpZ2h0PSI0My4zMyIvPgogICAgICAgICAgPHJlY3QgY2xhc3M9ImNscy00IiB4PSI1My40MiIgeT0iNTMuMzMiIHdpZHRoPSIxMS45MiIgaGVpZ2h0PSIyMS42NyIvPgogICAgICAgICAgPHJlY3QgY2xhc3M9ImNscy01IiB4PSI2OS42NSIgeT0iNzQuOTciIHdpZHRoPSIxMS45MiIgaGVpZ2h0PSIyMS42OSIvPgogICAgICAgICAgPHBvbHlnb24gY2xhc3M9ImNscy0xIiBwb2ludHM9Ijk0LjgzIDUzLjMzIDEwNy44MyA1My4zMyA4Mi42NSA5Ni42NiA2OS42NCA5Ni42NiA5NC44MyA1My4zMyIvPgogICAgICAgICAgPHBvbHlnb24gY2xhc3M9ImNscy0xIiBwb2ludHM9IjExMi4yMSA1My4zMyAxMjUuMjEgNTMuMzMgMTAwLjAzIDk2LjY2IDg3LjAzIDk2LjY2IDExMi4yMSA1My4zMyIvPgogICAgICAgICAgPHBvbHlnb24gY2xhc3M9ImNscy0xIiBwb2ludHM9IjQwLjE2IDk2LjY2IDI3LjE1IDk2LjY2IDUyLjMzIDUzLjMzIDY1LjM0IDUzLjMzIDQwLjE2IDk2LjY2Ii8+CiAgICAgICAgICA8cG9seWdvbiBjbGFzcz0iY2xzLTEiIHBvaW50cz0iNDcuNDQgOTMuMjUgNDAuNiA5My4yNSA0MC42IDg0LjY1IDUyLjM5IDg0LjY1IDQ3LjQ0IDkzLjI1Ii8+CiAgICAgICAgPC9nPgogICAgICA8L2c+CiAgICA8L2c+CiAgPC9nPgogIDxnPgogICAgPHBhdGggY2xhc3M9ImNscy03IiBkPSJNMTc3Ljk2LDQ4LjMzYzQuMTIsMCw3LjM0LDMuMjIsNy4zNCw4LjI0cy0zLjIyLDguMzUtNy4zNCw4LjM1Yy0yLjUyLDAtNC4zMi0xLjI1LTUuMzEtMi41NXY5Ljk1aC00LjA2di0yMy43M2g0LjA2djIuMzJjLjk2LTEuMzYsMi44MS0yLjU4LDUuMzEtMi41OFpNMTc2Ljg5LDUxLjljLTIuMTgsMC00LjI0LDEuNjgtNC4yNCw0LjczczIuMDYsNC43Myw0LjI0LDQuNzMsNC4yNi0xLjc0LDQuMjYtNC43OS0yLjA2LTQuNjctNC4yNi00LjY3WiIvPgogICAgPHBhdGggY2xhc3M9ImNscy03IiBkPSJNMTg4LjE1LDQzLjJoNC4wNnYyMS40NmgtNC4wNnYtMjEuNDZaIi8+CiAgICA8cGF0aCBjbGFzcz0iY2xzLTciIGQ9Ik0yMDIuMzUsNDguMzNjMi41OCwwLDQuMzUsMS4yMiw1LjMxLDIuNTV2LTIuMjloNC4wOXYxNi4wN2gtNC4wOXYtMi4zNWMtLjk2LDEuMzktMi43OSwyLjYxLTUuMzQsMi42MS00LjA2LDAtNy4zMS0zLjM0LTcuMzEtOC4zNXMzLjI1LTguMjQsNy4zNC04LjI0Wk0yMDMuMzksNTEuOWMtMi4xNywwLTQuMjMsMS42Mi00LjIzLDQuNjdzMi4wNiw0Ljc5LDQuMjMsNC43OSw0LjI2LTEuNjgsNC4yNi00LjczLTIuMDMtNC43My00LjI2LTQuNzNaIi8+CiAgICA8cGF0aCBjbGFzcz0iY2xzLTciIGQ9Ik0yMjEuNTksNjQuOTNjLTQuMDMsMC02Ljg1LTIuMzUtNy4wMi01LjM0aDQuMDljLjE0LDEuMjIsMS4yOCwyLjE1LDIuOSwyLjE1czIuNDctLjczLDIuNDctMS42NWMwLTIuODctOS4wOC0xLjA0LTkuMDgtNi45MywwLTIuNjcsMi4zOC00LjgyLDYuMzUtNC44MnM2LjI0LDIuMTIsNi40Nyw1LjMxaC0zLjg5Yy0uMTItMS4yNS0xLjEtMi4wOS0yLjctMi4wOS0xLjUxLDAtMi4yOS42MS0yLjI5LDEuNTQsMCwyLjkzLDguOTEsMS4xLDkuMDIsNi45OSwwLDIuNzYtMi40MSw0Ljg0LTYuMzIsNC44NFoiLz4KICAgIDxwYXRoIGNsYXNzPSJjbHMtNyIgZD0iTTIzMS40Nyw1MS45M2gtMS45MXYtMy4zNGgxLjkxdi0zLjk3aDQuMDl2My45N2gzLjZ2My4zNGgtMy42djcuNzdjMCwxLjA3LjQ0LDEuNTQsMS43MSwxLjU0aDEuODh2My40MmgtMi41NWMtMy4wNywwLTUuMTMtMS4zMS01LjEzLTQuOTl2LTcuNzVaIi8+CiAgICA8cGF0aCBjbGFzcz0iY2xzLTciIGQ9Ik0yNDEuMzYsNDQuM2MwLTEuMzMsMS4wNC0yLjM4LDIuNDktMi4zOHMyLjUsMS4wNCwyLjUsMi4zOC0xLjA3LDIuMzgtMi41LDIuMzgtMi40OS0xLjA0LTIuNDktMi4zOFpNMjQxLjc5LDQ4LjU5aDQuMDZ2MTYuMDdoLTQuMDZ2LTE2LjA3WiIvPgogICAgPHBhdGggY2xhc3M9ImNscy03IiBkPSJNMjU2LjQ2LDQ4LjMzYzQsMCw2LjcsMi4wOSw3LjU3LDUuNjloLTQuMzhjLS40Ni0xLjM2LTEuNTQtMi4yMy0zLjIyLTIuMjMtMi4yNiwwLTMuNzcsMS43MS0zLjc3LDQuODRzMS41MSw0LjgyLDMuNzcsNC44MmMxLjY4LDAsMi43My0uNzUsMy4yMi0yLjJoNC4zOGMtLjg3LDMuNDItMy41Nyw1LjY4LTcuNTcsNS42OC00LjY0LDAtNy45NS0zLjI1LTcuOTUtOC4zczMuMzEtOC4zLDcuOTUtOC4zWiIvPgogICAgPHBhdGggY2xhc3M9ImNscy03IiBkPSJNMTcxLjIzLDgzLjM5bDQuMDYsMTIuMzMsNC4wNi0xMi4zM2g0LjMybC01Ljk1LDE2LjA3aC00LjkzbC01LjkyLTE2LjA3aDQuMzVaIi8+CiAgICA8cGF0aCBjbGFzcz0iY2xzLTciIGQ9Ik0xOTIuMTQsOTkuNzNjLTQuNjcsMC04LjA2LTMuMjUtOC4wNi04LjNzMy4zMS04LjMsOC4wNi04LjMsNy45MiwzLjE2LDcuOTIsNy45NWMwLC41Mi0uMDMsMS4wNC0uMTIsMS41N2gtMTEuNzVjLjIsMi4zOCwxLjgzLDMuNzEsMy44NiwzLjcxLDEuNzQsMCwyLjctLjg3LDMuMjItMS45NGg0LjM4Yy0uODcsMi45Ni0zLjU0LDUuMzEtNy41MSw1LjMxWk0xODguMjMsODkuOTJoNy42M2MtLjA2LTIuMTItMS43NC0zLjQ1LTMuODMtMy40NS0xLjk0LDAtMy40OCwxLjI1LTMuOCwzLjQ1WiIvPgogICAgPHBhdGggY2xhc3M9ImNscy03IiBkPSJNMjA2Ljg4LDk5LjQ3aC00LjA2di0xNi4wN2g0LjA2djIuNWMxLjAyLTEuNjUsMi43LTIuNzMsNC45My0yLjczdjQuMjZoLTEuMDdjLTIuNDEsMC0zLjg2LjkzLTMuODYsNC4wM3Y4LjAxWiIvPgogICAgPHBhdGggY2xhc3M9ImNscy03IiBkPSJNMjIzLjM1LDgzLjEzYzQuMTIsMCw3LjM0LDMuMjIsNy4zNCw4LjI0cy0zLjIyLDguMzUtNy4zNCw4LjM1Yy0yLjUyLDAtNC4zMi0xLjI1LTUuMzEtMi41NXY5Ljk1aC00LjA2di0yMy43M2g0LjA2djIuMzJjLjk2LTEuMzYsMi44MS0yLjU4LDUuMzEtMi41OFpNMjIyLjI4LDg2LjdjLTIuMTgsMC00LjI0LDEuNjgtNC4yNCw0LjczczIuMDYsNC43Myw0LjI0LDQuNzMsNC4yNi0xLjc0LDQuMjYtNC43OS0yLjA2LTQuNjctNC4yNi00LjY3WiIvPgogICAgPHBhdGggY2xhc3M9ImNscy03IiBkPSJNMjM5LjksODMuMTNjMi41OCwwLDQuMzUsMS4yMiw1LjMxLDIuNTV2LTIuMjloNC4wOXYxNi4wN2gtNC4wOXYtMi4zNWMtLjk2LDEuMzktMi43OSwyLjYxLTUuMzQsMi42MS00LjA2LDAtNy4zMS0zLjM0LTcuMzEtOC4zNXMzLjI1LTguMjQsNy4zNC04LjI0Wk0yNDAuOTQsODYuN2MtMi4xNywwLTQuMjMsMS42Mi00LjIzLDQuNjdzMi4wNiw0Ljc5LDQuMjMsNC43OSw0LjI2LTEuNjgsNC4yNi00LjczLTIuMDMtNC43My00LjI2LTQuNzNaIi8+CiAgICA8cGF0aCBjbGFzcz0iY2xzLTciIGQ9Ik0yNTMuMDMsNzhoNC4wNnYxMi4yMWw1LjQtNi44Mmg1LjI4bC03LjA4LDguMDYsNy4xNCw4LjAxaC01LjI4bC01LjQ1LTYuODV2Ni44NWgtNC4wNnYtMjEuNDZaIi8+CiAgICA8cGF0aCBjbGFzcz0iY2xzLTciIGQ9Ik0yNjkuNzMsNzhoNC4wNnYxMi4yMWw1LjQtNi44Mmg1LjI4bC03LjA4LDguMDYsNy4xNCw4LjAxaC01LjI4bC01LjQ1LTYuODV2Ni44NWgtNC4wNnYtMjEuNDZaIi8+CiAgICA8cGF0aCBjbGFzcz0iY2xzLTciIGQ9Ik0yODYuMDEsNzkuMWMwLTEuMzMsMS4wNC0yLjM4LDIuNDktMi4zOHMyLjUsMS4wNCwyLjUsMi4zOC0xLjA3LDIuMzgtMi41LDIuMzgtMi40OS0xLjA0LTIuNDktMi4zOFpNMjg2LjQ0LDgzLjM5aDQuMDZ2MTYuMDdoLTQuMDZ2LTE2LjA3WiIvPgogICAgPHBhdGggY2xhc3M9ImNscy03IiBkPSJNMzA1LjQ2LDkwLjU5YzAtMi41OC0xLjQyLTMuOTctMy41Ny0zLjk3cy0zLjYzLDEuMzktMy42MywzLjk3djguODhoLTQuMDZ2LTE2LjA3aDQuMDZ2MmMxLjA0LTEuMzYsMi43OC0yLjIzLDQuODQtMi4yMywzLjc0LDAsNi40MSwyLjQ0LDYuNDEsNi44N3Y5LjQzaC00LjA2di04Ljg4WiIvPgogICAgPHBhdGggY2xhc3M9ImNscy03IiBkPSJNMzE5LjQ5LDgzLjEzYzIuNTIsMCw0LjM1LDEuMTYsNS4zMSwyLjU1di0yLjI5aDQuMDl2MTYuMTljMCw0LjM1LTIuNjcsNy44LTcuOTUsNy44LTQuNTIsMC03LjY5LTIuMjYtOC4wOS01Ljk1aDQuMDNjLjQxLDEuNDUsMS45MSwyLjQxLDMuOTQsMi40MSwyLjIzLDAsMy45Ny0xLjI4LDMuOTctNC4yNnYtMi41Yy0uOTYsMS4zOS0yLjc5LDIuNjQtNS4zMSwyLjY0LTQuMDksMC03LjM0LTMuMzQtNy4zNC04LjM1czMuMjUtOC4yNCw3LjM0LTguMjRaTTMyMC41NCw4Ni43Yy0yLjE3LDAtNC4yMywxLjYyLTQuMjMsNC42N3MyLjA2LDQuNzksNC4yMyw0Ljc5LDQuMjYtMS42OCw0LjI2LTQuNzMtMi4wMy00LjczLTQuMjYtNC43M1oiLz4KICAgIDxwYXRoIGNsYXNzPSJjbHMtNyIgZD0iTTMzOS43NSw5OS43M2MtNC42NywwLTguMDYtMy4yNS04LjA2LTguM3MzLjMxLTguMyw4LjA2LTguMyw3LjkyLDMuMTYsNy45Miw3Ljk1YzAsLjUyLS4wMywxLjA0LS4xMiwxLjU3aC0xMS43NWMuMiwyLjM4LDEuODMsMy43MSwzLjg2LDMuNzEsMS43NCwwLDIuNy0uODcsMy4yMi0xLjk0aDQuMzhjLS44NywyLjk2LTMuNTQsNS4zMS03LjUxLDUuMzFaTTMzNS44Myw4OS45Mmg3LjYzYy0uMDYtMi4xMi0xLjc0LTMuNDUtMy44My0zLjQ1LTEuOTQsMC0zLjQ4LDEuMjUtMy44LDMuNDVaIi8+CiAgICA8cGF0aCBjbGFzcz0iY2xzLTciIGQ9Ik0zNjEuNjgsOTAuNTljMC0yLjU4LTEuNDItMy45Ny0zLjU3LTMuOTdzLTMuNjMsMS4zOS0zLjYzLDMuOTd2OC44OGgtNC4wNnYtMTYuMDdoNC4wNnYyYzEuMDQtMS4zNiwyLjc4LTIuMjMsNC44NC0yLjIzLDMuNzQsMCw2LjQxLDIuNDQsNi40MSw2Ljg3djkuNDNoLTQuMDZ2LTguODhaIi8+CiAgPC9nPgo8L3N2Zz4=" alt="AVI Volendam" style="height:56px;">
+    </div>
+
+  <div class="header-center">
+    <div class="header-title">Calculatiemodule</div>
+    <div class="header-sub">Beugelzakken &amp; Bagloaderzakken</div>
+  </div>
+  <div class="header-date" id="headerDate"></div>
+</header>
+
+<!-- NAV -->
+<nav class="nav">
+  <button class="nav-btn active" onclick="showTab('stamdata')">⚙ Stamdata</button>
+  <button class="nav-btn" onclick="showTab('calculatie')">📐 Calculatie</button>
+  <button class="nav-btn" onclick="showTab('offerte')">📄 Offerte</button>
+</nav>
+
+<!-- ══════════════════════════════════════════════
+     TAB 1 · STAMDATA
+     ══════════════════════════════════════════════ -->
+<div id="tab-stamdata" class="tab active">
+
+  <div class="notice">
+    Stamdata worden lokaal opgeslagen. Wijzigingen zijn direct zichtbaar in de Calculatie.
+  </div>
+
+  <div class="grid-2">
+
+    <!-- Grondstoffen -->
+    <div class="card" style="grid-column:1/-1;">
+      <div class="card-header">
+        Grondstoffen / Additieven
+        <button class="btn btn-primary btn-small" onclick="addGrondstof()">+ Toevoegen</button>
+      </div>
+      <div class="card-body" style="padding:0;">
+        <div class="scrollable">
+        <table class="data-table inline-table" id="grondstoffen-table">
+          <thead>
+            <tr>
+              <th style="width:40px;">#</th>
+              <th>Naam / Omschrijving</th>
+              <th style="width:110px;">Soort. gew.</th>
+              <th style="width:120px;">Prijs / kg (€)</th>
+              <th style="width:80px;"></th>
+            </tr>
+          </thead>
+          <tbody id="grondstoffen-body"></tbody>
+        </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Machine: Enkele Wicket -->
+    <div class="card">
+      <div class="card-header">Enkele Wicket – Snelheden &amp; Tarief</div>
+      <div class="card-body">
+        <div class="grid-2">
+          <div class="field">
+            <label>≤ 25.000 stuks (st/uur)</label>
+            <input type="number" id="ew_s1" step="100">
+          </div>
+          <div class="field">
+            <label>25.001 – 50.000 stuks (st/uur)</label>
+            <input type="number" id="ew_s2" step="100">
+          </div>
+          <div class="field">
+            <label>&gt; 50.000 stuks (st/uur)</label>
+            <input type="number" id="ew_s3" step="100">
+          </div>
+          <div class="field">
+            <label>Machineprijs (€/uur)</label>
+            <input type="number" id="ew_prijs" step="1">
+          </div>
+          <div class="field">
+            <label>Correctiefactor PP</label>
+            <input type="number" id="ew_ppfactor" step="0.01">
+            <div class="hint">Bijv. 0.90 = 10% langzamer bij PP</div>
+          </div>
+          <div class="field">
+            <label>Correctiefactor dikte &gt; 0,05mm</label>
+            <input type="number" id="ew_diktefactor" step="0.01">
+            <div class="hint">Bijv. 0.75 = 25% langzamer</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Machine: Dubbele Wicket -->
+    <div class="card">
+      <div class="card-header">Dubbele Wicket – Snelheden &amp; Tarief</div>
+      <div class="card-body">
+        <div class="grid-2">
+          <div class="field">
+            <label>≤ 25.000 stuks (st/uur)</label>
+            <input type="number" id="dw_s1" step="100">
+          </div>
+          <div class="field">
+            <label>25.001 – 50.000 stuks (st/uur)</label>
+            <input type="number" id="dw_s2" step="100">
+          </div>
+          <div class="field">
+            <label>&gt; 50.000 stuks (st/uur)</label>
+            <input type="number" id="dw_s3" step="100">
+          </div>
+          <div class="field">
+            <label>Machineprijs (€/uur)</label>
+            <input type="number" id="dw_prijs" step="1">
+          </div>
+          <div class="field">
+            <label>Correctiefactor PP</label>
+            <input type="number" id="dw_ppfactor" step="0.01">
+          </div>
+          <div class="field">
+            <label>Correctiefactor dikte &gt; 0,05mm</label>
+            <input type="number" id="dw_diktefactor" step="0.01">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Extrusie- en grondstofkosten -->
+    <div class="card">
+      <div class="card-header">Extrusie- &amp; Materiaalkosten</div>
+      <div class="card-body">
+        <div class="grid-2">
+          <div class="field">
+            <label>Extrusieprijs handelaar (€/kg)</label>
+            <input type="number" id="extr_handel" step="0.01">
+          </div>
+          <div class="field">
+            <label>Extrusieprijs algemeen (€/kg)</label>
+            <input type="number" id="extr_alg" step="0.01">
+          </div>
+          <div class="field">
+            <label>Afval percentage (%)</label>
+            <input type="number" id="afval_pct" step="0.5">
+            <div class="hint">Standaard 15%</div>
+          </div>
+          <div class="field">
+            <label>Extrusie-breedte machine (cm)</label>
+            <input type="number" id="extrusie_breedte" step="1">
+            <div class="hint">Max. breedte extruder</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Overige kosten -->
+    <div class="card">
+      <div class="card-header">Overige Kosten (per kg tenzij anders)</div>
+      <div class="card-body">
+        <div class="grid-2">
+          <div class="field">
+            <label>Dozen (€/kg)</label>
+            <input type="number" id="k_dozen" step="0.01">
+          </div>
+          <div class="field">
+            <label>Handling (€/kg)</label>
+            <input type="number" id="k_handling" step="0.01">
+          </div>
+          <div class="field">
+            <label>Energie/diversen (€/kg)</label>
+            <input type="number" id="k_energie" step="0.01">
+          </div>
+          <div class="field">
+            <label>Pallet (€/pallet)</label>
+            <input type="number" id="k_pallet" step="1">
+          </div>
+          <div class="field">
+            <label>Vrachtkosten (€/pallet) NL</label>
+            <input type="number" id="k_vracht_nl" step="1">
+          </div>
+          <div class="field">
+            <label>Vrachtkosten (€/pallet) België</label>
+            <input type="number" id="k_vracht_be" step="1">
+          </div>
+          <div class="field">
+            <label>Max. gewicht per pallet (kg)</label>
+            <input type="number" id="k_pallet_max_kg" step="50">
+          </div>
+          <div class="field">
+            <label>Kleefstrip hersluitbaar (€/1000m)</label>
+            <input type="number" id="k_klstr_h" step="0.5">
+          </div>
+          <div class="field">
+            <label>Kleefstrip permanent (€/1000m)</label>
+            <input type="number" id="k_klstr_p" step="0.5">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Drukkosten -->
+    <div class="card" style="grid-column:1/-1;">
+      <div class="card-header">Drukmachines</div>
+      <div class="card-body">
+        <div class="grid-3">
+          <div>
+            <div class="section-title">Machine 1</div>
+            <div class="field"><label>Naam</label><input type="text" id="d1_naam"></div>
+            <div class="field"><label>Snelheid (m/uur)</label><input type="number" id="d1_speed" step="10"></div>
+            <div class="field"><label>Uurtarief (€/uur)</label><input type="number" id="d1_prijs" step="1"></div>
+            <div class="field"><label>Max. kleuren</label><input type="number" id="d1_max_kleuren" step="1"></div>
+            <div class="field"><label>Insteltijd per kleur (min)</label><input type="number" id="d1_setup" step="5"></div>
+          </div>
+          <div>
+            <div class="section-title">Machine 2</div>
+            <div class="field"><label>Naam</label><input type="text" id="d2_naam"></div>
+            <div class="field"><label>Snelheid (m/uur)</label><input type="number" id="d2_speed" step="10"></div>
+            <div class="field"><label>Uurtarief (€/uur)</label><input type="number" id="d2_prijs" step="1"></div>
+            <div class="field"><label>Max. kleuren</label><input type="number" id="d2_max_kleuren" step="1"></div>
+            <div class="field"><label>Insteltijd per kleur (min)</label><input type="number" id="d2_setup" step="5"></div>
+          </div>
+          <div>
+            <div class="section-title">Machine 3 (Columbus)</div>
+            <div class="field"><label>Naam</label><input type="text" id="d3_naam"></div>
+            <div class="field"><label>Snelheid (m/uur)</label><input type="number" id="d3_speed" step="10"></div>
+            <div class="field"><label>Uurtarief (€/uur)</label><input type="number" id="d3_prijs" step="1"></div>
+            <div class="field"><label>Max. kleuren</label><input type="number" id="d3_max_kleuren" step="1"></div>
+            <div class="field"><label>Insteltijd per kleur (min)</label><input type="number" id="d3_setup" step="5"></div>
+          </div>
+        </div>
+        <div class="grid-2" style="margin-top:8px;">
+          <div class="field">
+            <label>Inktkosten (€/kg folie)</label>
+            <input type="number" id="k_inkt" step="0.01">
+            <div class="hint">Gebaseerd op drukoppervlak % × gewicht</div>
+          </div>
+          <div class="field">
+            <label>Standaard drukoppervlak (%)</label>
+            <input type="number" id="druk_opp" step="5" min="0" max="100">
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div style="text-align:right; margin-top:4px;">
+    <button class="btn btn-primary" onclick="saveStamdata()">💾 Stamdata opslaan</button>
+    <button class="btn btn-secondary" style="margin-left:8px;" onclick="resetStamdata()">↩ Fabrieksinstellingen</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     TAB 2 · CALCULATIE
+     ══════════════════════════════════════════════ -->
+<div id="tab-calculatie" class="tab">
+
+  <div class="grid-2">
+
+    <!-- Klantinfo -->
+    <div class="card">
+      <div class="card-header">Klantgegevens</div>
+      <div class="card-body">
+        <div class="grid-2">
+          <div class="field"><label>Bedrijfsnaam</label><input type="text" id="c_bedrijf" placeholder="Klantnaam"></div>
+          <div class="field"><label>Contactpersoon</label><input type="text" id="c_contact" placeholder="Naam"></div>
+          <div class="field"><label>E-mail</label><input type="email" id="c_email" placeholder="email@domein.nl"></div>
+          <div class="field"><label>AVI Artikelnummer</label><input type="text" id="c_artnr" placeholder="Z230260001"></div>
+          <div class="field" style="grid-column:1/-1;"><label>Omschrijving product</label><input type="text" id="c_omschrijving" placeholder="Bijv. Transparante beugelzak LDPE"></div>
+        </div>
+        <div class="grid-2">
+          <div class="field">
+            <label>Type klant</label>
+            <div class="radio-group">
+              <label><input type="radio" name="handelaar" value="j" id="r_handel"> Handelaar</label>
+              <label><input type="radio" name="handelaar" value="n" id="r_alg" checked> Algemeen</label>
+            </div>
+          </div>
+          <div class="field">
+            <label>Verzendland</label>
+            <div class="radio-group">
+              <label><input type="radio" name="verzend" value="nl" checked> Nederland</label>
+              <label><input type="radio" name="verzend" value="be"> België</label>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Product afmetingen -->
+    <div class="card">
+      <div class="card-header">Productafmetingen</div>
+      <div class="card-body">
+        <div class="grid-3">
+          <div class="field">
+            <label>Breedte (cm)</label>
+            <input type="number" id="p_breedte" step="0.5" min="11" max="37" oninput="validateDims()">
+          </div>
+          <div class="field">
+            <label>Lengte (cm)</label>
+            <input type="number" id="p_lengte" step="0.5" min="15" oninput="validateDims()">
+          </div>
+          <div class="field">
+            <label>Dikte (mm)</label>
+            <input type="number" id="p_dikte" step="0.001" min="0.02" max="0.07" oninput="validateDims()">
+          </div>
+          <div class="field">
+            <label>Bodemvouw (cm)</label>
+            <input type="number" id="p_bodemvouw" step="0.5" min="2" oninput="validateDims()">
+          </div>
+          <div class="field">
+            <label>Klep (cm)</label>
+            <input type="number" id="p_klep" step="0.5" min="3" max="10" oninput="validateDims()">
+          </div>
+          <div class="field">
+            <label>Blok (cm)</label>
+            <input type="number" id="p_blok" step="0.5" min="0" max="10" oninput="validateDims()">
+          </div>
+        </div>
+        <div class="field">
+          <label>Aantal (stuks)</label>
+          <input type="number" id="p_aantal" step="1000" min="1000" oninput="calc()">
+        </div>
+        <div id="dim-warnings" style="margin-top:8px;"></div>
+      </div>
+    </div>
+
+    <!-- Materiaal mix -->
+    <div class="card">
+      <div class="card-header">
+        Materiaalsamenstelling
+        <button class="btn btn-primary btn-small" onclick="addMixRow()">+ Regel</button>
+      </div>
+      <div class="card-body" style="padding:0;">
+        <table class="data-table inline-table">
+          <thead>
+            <tr>
+              <th>Grondstof</th>
+              <th style="width:90px;">Massa %</th>
+              <th style="width:90px;">Soort. gew.</th>
+              <th style="width:100px;">Prijs /kg</th>
+              <th style="width:40px;"></th>
+            </tr>
+          </thead>
+          <tbody id="mix-body"></tbody>
+          <tfoot>
+            <tr>
+              <td colspan="1">Totaal</td>
+              <td id="mix-pct-total" style="font-family:'IBM Plex Mono';font-weight:700;">0%</td>
+              <td id="mix-sg-result" style="font-family:'IBM Plex Mono';">–</td>
+              <td id="mix-price-result" style="font-family:'IBM Plex Mono';">–</td>
+              <td></td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    </div>
+
+    <!-- Opties -->
+    <div class="card">
+      <div class="card-header">Productopties</div>
+      <div class="card-body">
+        <div class="grid-2">
+          <div class="field">
+            <label>Machinetype</label>
+            <select id="p_machine" onchange="calc()">
+              <option value="auto">Automatisch</option>
+              <option value="enkel">Enkele Wicket</option>
+              <option value="dubbel">Dubbele Wicket</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>PP materiaal</label>
+            <div class="radio-group">
+              <label><input type="radio" name="pp" value="j"> Ja</label>
+              <label><input type="radio" name="pp" value="n" checked> Nee</label>
+            </div>
+          </div>
+          <div class="field">
+            <label>Positiedruk</label>
+            <div class="radio-group">
+              <label><input type="radio" name="positiedruk" value="j" id="r_pos_j" onchange="togglePrint()"> Ja</label>
+              <label><input type="radio" name="positiedruk" value="n" id="r_pos_n" checked onchange="togglePrint()"> Nee</label>
+            </div>
+          </div>
+          <div class="field" id="field-kleuren" style="display:none;">
+            <label>Aantal drukkleuren</label>
+            <input type="number" id="p_kleuren" step="1" min="1" max="6" value="1" oninput="calc()">
+          </div>
+          <div class="field" id="field-afslag" style="display:none;">
+            <label>Afslag (cm)</label>
+            <input type="number" id="p_afslag" step="1" value="60" oninput="calc()">
+          </div>
+          <div class="field">
+            <label>Kleefstrip</label>
+            <select id="p_kleefstrip" onchange="calc()">
+              <option value="geen">Geen</option>
+              <option value="hersluitbaar">Hersluitbaar</option>
+              <option value="permanent">Permanent</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Type zak</label>
+            <select id="p_type_zak" onchange="calc()">
+              <option value="bagloader">Bagloaderzak</option>
+              <option value="beugelzak">Beugelzak</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Levering</label>
+            <select id="p_hulzen" onchange="calc()">
+              <option value="n">Zonder hulzen</option>
+              <option value="j">Met hulzen</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- RESULTAAT -->
+  <div class="card">
+    <div class="card-header">
+      Calculatie Resultaat
+      <button class="btn btn-primary btn-small" onclick="showTab('offerte')">→ Naar Offerte</button>
+    </div>
+    <div class="card-body">
+
+      <div class="grid-2">
+
+        <!-- Gewicht & materiaal -->
+        <div>
+          <div class="section-title">Gewicht &amp; Materiaal</div>
+          <table class="data-table">
+            <tr><td class="label-col">Gewicht per stuk (g)</td><td class="num" id="r_gew_stuk">–</td></tr>
+            <tr><td class="label-col">Gewicht per 1.000 ex. afval (kg)</td><td class="num" id="r_gew_1000">–</td></tr>
+            <tr><td class="label-col">Gewicht per 1.000 incl. afval (kg)</td><td class="num" id="r_gew_afval">–</td></tr>
+            <tr><td class="label-col">Totaal gewicht order (kg)</td><td class="num" id="r_gew_tot">–</td></tr>
+            <tr><td class="label-col">Gemiddeld soortel. gewicht</td><td class="num" id="r_sg">–</td></tr>
+            <tr><td class="label-col">Grondstofprijs (€/kg)</td><td class="num" id="r_grondprijs">–</td></tr>
+          </table>
+
+          <div class="section-title" style="margin-top:16px;">Machine</div>
+          <table class="data-table">
+            <tr><td class="label-col">Machinetype</td><td class="num" id="r_machine_type">–</td></tr>
+            <tr><td class="label-col">Sealsnelheid (st/uur)</td><td class="num" id="r_snelheid">–</td></tr>
+            <tr><td class="label-col">Sealuren totaal</td><td class="num" id="r_uren">–</td></tr>
+            <tr><td class="label-col">Te extruderen (m buis)</td><td class="num" id="r_extrmtr">–</td></tr>
+          </table>
+        </div>
+
+        <!-- Kostprijsopbouw -->
+        <div>
+          <div class="section-title">Kostprijsopbouw (€ per 1.000 stuks)</div>
+          <table class="data-table">
+            <tr><td class="label-col">Grondstof + afval</td><td class="num" id="r_k_grond">–</td></tr>
+            <tr><td class="label-col">Extrusie</td><td class="num" id="r_k_extr">–</td></tr>
+            <tr><td class="label-col">Sealkosten</td><td class="num" id="r_k_seal">–</td></tr>
+            <tr><td class="label-col">Drukkosten</td><td class="num" id="r_k_druk">–</td></tr>
+            <tr><td class="label-col">Inktkosten</td><td class="num" id="r_k_inkt">–</td></tr>
+            <tr><td class="label-col">Kleefstrip</td><td class="num" id="r_k_klstr">–</td></tr>
+            <tr><td class="label-col">Dozen + handling</td><td class="num" id="r_k_dozen">–</td></tr>
+            <tr><td class="label-col">Energie / diversen</td><td class="num" id="r_k_energie">–</td></tr>
+            <tr><td class="label-col">Pallets + vracht</td><td class="num" id="r_k_vracht">–</td></tr>
+            <tfoot>
+              <tr><td class="label-col">KOSTPRIJS per 1.000 stuks</td><td class="num" id="r_kostprijs">–</td></tr>
+            </tfoot>
+          </table>
+        </div>
+
+      </div>
+
+      <div style="margin-top:20px;" class="result-highlight">
+        <div>
+          <div style="font-size:12px;color:rgba(255,255,255,.6);margin-bottom:4px;">KOSTPRIJS PER 1.000 STUKS</div>
+          <div class="main-value" id="r_kostprijs_big">–</div>
+          <div class="sub" id="r_kostprijs_sub">Klik op "Naar Offerte" om marge en verkoopprijs in te stellen</div>
+        </div>
+        <div style="text-align:right;">
+          <div style="font-size:12px;color:rgba(255,255,255,.6);margin-bottom:4px;">TOTAAL ORDER</div>
+          <div style="font-family:'IBM Plex Mono';font-size:22px;font-weight:600;" id="r_totaal_order">–</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════════════════════
+     TAB 3 · OFFERTE
+     ══════════════════════════════════════════════ -->
+<div id="tab-offerte" class="tab">
+
+  <div class="grid-2" style="margin-bottom:20px;" class="print-hide">
+
+    <div class="card print-hide">
+      <div class="card-header">Margeinstelling</div>
+      <div class="card-body">
+        <div class="marge-control">
+          <label>Marge</label>
+          <input type="range" id="marge_slider" min="0" max="50" step="0.5" value="10" oninput="updateMarge()">
+          <div class="marge-badge" id="marge_display">10%</div>
+        </div>
+        <div class="field">
+          <label>Of voer exact in (%)</label>
+          <input type="number" id="marge_input" step="0.5" min="0" max="100" value="10" oninput="updateMargeInput()">
+        </div>
+        <table class="data-table" style="margin-top:12px;">
+          <tr><td>Kostprijs per 1.000</td><td class="num" id="o_kostprijs">–</td></tr>
+          <tr><td>Marge per 1.000</td><td class="num" id="o_marge_bedrag">–</td></tr>
+          <tr><td style="font-weight:700;">Verkoopprijs per 1.000</td><td class="num" style="font-weight:700;color:#025a7a;" id="o_verkoop">–</td></tr>
+          <tr><td>Totaal orderbedrag</td><td class="num" id="o_totaal">–</td></tr>
+        </table>
+        <div class="field" style="margin-top:14px;">
+          <label>Offertenummer</label>
+          <input type="text" id="o_nummer" placeholder="AVI-2026-001">
+        </div>
+        <div class="field">
+          <label>Levertijd (weken)</label>
+          <input type="number" id="o_levertijd" step="1" min="1" value="3">
+        </div>
+        <div class="field">
+          <label>Opmerkingen (intern)</label>
+          <input type="text" id="o_opmerking" placeholder="Intern gebruik">
+        </div>
+      </div>
+    </div>
+
+    <div class="card print-hide">
+      <div class="card-header">Offerte-instellingen</div>
+      <div class="card-body">
+        <div class="field">
+          <label>Taal offerte</label>
+          <div class="radio-group">
+            <label><input type="radio" name="offtaal" value="nl" checked onchange="renderOfferte()"> Nederlands</label>
+            <label><input type="radio" name="offtaal" value="de" onchange="renderOfferte()"> Duits</label>
+            <label><input type="radio" name="offtaal" value="en" onchange="renderOfferte()"> Engels</label>
+          </div>
+        </div>
+        <div class="field">
+          <label>Behandeld door (verkoper)</label>
+          <select id="o_verkoper" onchange="renderOfferte()">
+            <option value="">– selecteer –</option>
+            <option>Ad Rikkers</option>
+            <option>Hans Karregat</option>
+            <option>Sanne Reijmers</option>
+            <option>Andreas Buijs</option>
+            <option>Patrick Roskam</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Prijs weergave</label>
+          <div class="radio-group">
+            <label><input type="radio" name="prijs_display" value="per1000" checked onchange="renderOfferte()"> Per 1.000 stuks</label>
+            <label><input type="radio" name="prijs_display" value="totaal" onchange="renderOfferte()"> Totaalbedrag</label>
+          </div>
+        </div>
+        <div class="field">
+          <label>Prijs afronden</label>
+          <div class="radio-group">
+            <label><input type="radio" name="afronden" value="0" checked onchange="renderOfferte()"> Geen</label>
+            <label><input type="radio" name="afronden" value="0.5" onchange="renderOfferte()"> 0,50</label>
+            <label><input type="radio" name="afronden" value="1" onchange="renderOfferte()"> €1,–</label>
+          </div>
+        </div>
+        <div style="margin-top:16px;display:flex;gap:10px;flex-wrap:wrap;">
+          <button class="btn btn-navy" onclick="window.print()">🖨 Afdrukken</button>
+          <button class="btn btn-primary" onclick="renderOfferte()">↻ Vernieuwen</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- OFFERTE PREVIEW -->
+  <div class="card">
+    <div class="card-header">Offerte Preview</div>
+    <div id="offerte-output" class="offerte-preview"></div>
+  </div>
+
+</div>
+
+<script>
+// ════════════════════════════════════════════════
+// STATE
+// ════════════════════════════════════════════════
+const DEFAULT_STAMDATA = {
+  grondstoffen: [
+    {id:1,  naam:'LDPE (icis)',         sg:0.93,  prijs:2.53},
+    {id:2,  naam:'Groen 78784',         sg:1.00,  prijs:6.76},
+    {id:3,  naam:'Groen 680271',        sg:1.00,  prijs:7.70},
+    {id:4,  naam:'AS Roze 620',         sg:0.98,  prijs:12.27},
+    {id:5,  naam:'Geel 610188',         sg:1.10,  prijs:8.75},
+    {id:6,  naam:'VISTAMAX',            sg:0.862, prijs:3.10},
+    {id:7,  naam:'Beige 6027E',         sg:1.50,  prijs:3.50},
+    {id:8,  naam:'Violet 4022',         sg:1.08,  prijs:9.42},
+    {id:9,  naam:'Rood 5330',           sg:1.10,  prijs:7.14},
+    {id:10, naam:'Rood 603335',         sg:1.24,  prijs:5.66},
+    {id:11, naam:'Roze 5080',           sg:1.15,  prijs:5.16},
+    {id:12, naam:'Oranje',              sg:1.53,  prijs:11.78},
+    {id:13, naam:'Blauw 605004',        sg:1.39,  prijs:5.55},
+    {id:14, naam:'D22 Carbomax',        sg:2.00,  prijs:1.09},
+    {id:15, naam:'Ivoor 9035',          sg:1.50,  prijs:6.17},
+    {id:16, naam:'Grijs 605177',        sg:1.50,  prijs:4.67},
+    {id:17, naam:'Wit 7024',            sg:1.75,  prijs:4.71},
+    {id:18, naam:'Krijt 8989',          sg:1.90,  prijs:0.76},
+    {id:19, naam:'Zwart 4881',          sg:1.14,  prijs:3.25},
+    {id:20, naam:'Anti block 50203',    sg:0.92,  prijs:4.36},
+    {id:21, naam:'Proces Aid 60004',    sg:0.925, prijs:3.98},
+    {id:22, naam:'Anti-UV 4718',        sg:0.96,  prijs:7.30},
+    {id:23, naam:'Anti-UV 3946',        sg:0.95,  prijs:8.15},
+    {id:24, naam:'Bruin',               sg:1.43,  prijs:13.87},
+    {id:25, naam:'Zilver',              sg:1.13,  prijs:4.27},
+    {id:26, naam:'AMF 715',             sg:0.91,  prijs:3.31},
+    {id:27, naam:'Exeed 1327KD',        sg:0.927, prijs:2.63},
+    {id:28, naam:'Enable 2705HH',       sg:0.927, prijs:2.63},
+    {id:29, naam:'Vlamvertrager',       sg:1.13,  prijs:23.35},
+  ],
+  machines: {
+    enkel: { s1:8000, s2:10000, s3:12000, prijs:55, ppFactor:0.9, dikteFactor:0.75 },
+    dubbel:{ s1:8000, s2:9000,  s3:10000, prijs:55, ppFactor:0.9, dikteFactor:0.75 }
+  },
+  extrusie: {
+    handel: 1.60, alg: 1.80, afvalPct: 15, breedte: 100
+  },
+  kosten: {
+    dozen:0.10, handling:0.02, energie:0.04,
+    pallet:9, vrachtNL:0, vrachtBE:0,
+    palletMaxKg:500,
+    klstrHerslt:22, klstrPerm:34
+  },
+  druk: {
+    d1:{ naam:'Druk 1', speed:80, prijs:90, maxKleuren:6, setup:30 },
+    d2:{ naam:'Druk 2', speed:100, prijs:95, maxKleuren:8, setup:30 },
+    d3:{ naam:'Columbus', speed:120, prijs:100, maxKleuren:8, setup:30 }
+  },
+  inktprijs: 0.37,
+  drukOppervlak: 25
+};
+
+let SD = loadStamdata();
+let calcResult = null;
+let nextGsId = SD.grondstoffen.reduce((m,g)=>Math.max(m,g.id),0)+1;
+
+function loadStamdata() {
+  try {
+    const s = localStorage.getItem('avi_stamdata');
+    return s ? JSON.parse(s) : JSON.parse(JSON.stringify(DEFAULT_STAMDATA));
+  } catch(e) { return JSON.parse(JSON.stringify(DEFAULT_STAMDATA)); }
+}
+function saveSDLocal() {
+  localStorage.setItem('avi_stamdata', JSON.stringify(SD));
+}
+
+// ════════════════════════════════════════════════
+// INIT
+// ════════════════════════════════════════════════
+window.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('headerDate').textContent = new Date().toLocaleDateString('nl-NL',{day:'2-digit',month:'2-digit',year:'numeric'});
+  populateStamdataForm();
+  renderGrondstoffen();
+  initCalcDefaults();
+  addMixRow(); // first default row
+  addMixRow(); // second
+  setMixRow(0, 6, 82);  // icis 82%
+  setMixRow(1, 15, 5);  // Ivoor 5%
+  addMixRow(); setMixRow(2, 16, 7);  // Grijs 7%
+  addMixRow(); setMixRow(3, 19, 4);  // Zwart 4%
+  addMixRow(); setMixRow(4, 28, 2);  // Enable 2%
+  calc();
+  renderOfferte();
+});
+
+function initCalcDefaults() {
+  setVal('p_breedte', 28);
+  setVal('p_lengte', 44);
+  setVal('p_dikte', 0.025);
+  setVal('p_bodemvouw', 4);
+  setVal('p_klep', 4);
+  setVal('p_blok', 0);
+  setVal('p_aantal', 50000);
+  setVal('c_bedrijf', 'test');
+  setVal('c_contact', 'inkoop');
+  setVal('c_omschrijving', 'testfolie');
+}
+
+// ════════════════════════════════════════════════
+// TAB NAVIGATION
+// ════════════════════════════════════════════════
+function showTab(id) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+  event.target.classList.add('active');
+  if (id==='offerte') renderOfferte();
+}
+
+// ════════════════════════════════════════════════
+// STAMDATA FORM
+// ════════════════════════════════════════════════
+function populateStamdataForm() {
+  const m = SD.machines;
+  setVal('ew_s1', m.enkel.s1); setVal('ew_s2', m.enkel.s2); setVal('ew_s3', m.enkel.s3);
+  setVal('ew_prijs', m.enkel.prijs); setVal('ew_ppfactor', m.enkel.ppFactor);
+  setVal('ew_diktefactor', m.enkel.dikteFactor);
+  setVal('dw_s1', m.dubbel.s1); setVal('dw_s2', m.dubbel.s2); setVal('dw_s3', m.dubbel.s3);
+  setVal('dw_prijs', m.dubbel.prijs); setVal('dw_ppfactor', m.dubbel.ppFactor);
+  setVal('dw_diktefactor', m.dubbel.dikteFactor);
+  const e = SD.extrusie;
+  setVal('extr_handel', e.handel); setVal('extr_alg', e.alg);
+  setVal('afval_pct', e.afvalPct); setVal('extrusie_breedte', e.breedte);
+  const k = SD.kosten;
+  setVal('k_dozen', k.dozen); setVal('k_handling', k.handling);
+  setVal('k_energie', k.energie); setVal('k_pallet', k.pallet);
+  setVal('k_vracht_nl', k.vrachtNL); setVal('k_vracht_be', k.vrachtBE);
+  setVal('k_pallet_max_kg', k.palletMaxKg);
+  setVal('k_klstr_h', k.klstrHerslt); setVal('k_klstr_p', k.klstrPerm);
+  const d = SD.druk;
+  ['d1','d2','d3'].forEach(di => {
+    setVal(di+'_naam', d[di].naam); setVal(di+'_speed', d[di].speed);
+    setVal(di+'_prijs', d[di].prijs); setVal(di+'_max_kleuren', d[di].maxKleuren);
+    setVal(di+'_setup', d[di].setup);
+  });
+  setVal('k_inkt', SD.inktprijs);
+  setVal('druk_opp', SD.drukOppervlak);
+}
+
+function saveStamdata() {
+  SD.machines.enkel = {
+    s1:numVal('ew_s1'), s2:numVal('ew_s2'), s3:numVal('ew_s3'),
+    prijs:numVal('ew_prijs'), ppFactor:numVal('ew_ppfactor'), dikteFactor:numVal('ew_diktefactor')
+  };
+  SD.machines.dubbel = {
+    s1:numVal('dw_s1'), s2:numVal('dw_s2'), s3:numVal('dw_s3'),
+    prijs:numVal('dw_prijs'), ppFactor:numVal('dw_ppfactor'), dikteFactor:numVal('dw_diktefactor')
+  };
+  SD.extrusie = {
+    handel:numVal('extr_handel'), alg:numVal('extr_alg'),
+    afvalPct:numVal('afval_pct'), breedte:numVal('extrusie_breedte')
+  };
+  SD.kosten = {
+    dozen:numVal('k_dozen'), handling:numVal('k_handling'),
+    energie:numVal('k_energie'), pallet:numVal('k_pallet'),
+    vrachtNL:numVal('k_vracht_nl'), vrachtBE:numVal('k_vracht_be'),
+    palletMaxKg:numVal('k_pallet_max_kg'),
+    klstrHerslt:numVal('k_klstr_h'), klstrPerm:numVal('k_klstr_p')
+  };
+  ['d1','d2','d3'].forEach(di => {
+    SD.druk[di] = {
+      naam:strVal(di+'_naam'), speed:numVal(di+'_speed'),
+      prijs:numVal(di+'_prijs'), maxKleuren:numVal(di+'_max_kleuren'),
+      setup:numVal(di+'_setup')
+    };
+  });
+  SD.inktprijs = numVal('k_inkt');
+  SD.drukOppervlak = numVal('druk_opp');
+  saveSDLocal();
+  calc();
+  alert('Stamdata opgeslagen ✓');
+}
+
+function resetStamdata() {
+  if (!confirm('Alle stamdata resetten naar fabrieksinstellingen?')) return;
+  SD = JSON.parse(JSON.stringify(DEFAULT_STAMDATA));
+  saveSDLocal();
+  populateStamdataForm();
+  renderGrondstoffen();
+  calc();
+}
+
+// ════════════════════════════════════════════════
+// GRONDSTOFFEN TABLE (stamdata)
+// ════════════════════════════════════════════════
+function renderGrondstoffen() {
+  const tbody = document.getElementById('grondstoffen-body');
+  tbody.innerHTML = '';
+  SD.grondstoffen.forEach((g,i) => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${g.id}</td>
+      <td><input type="text" value="${esc(g.naam)}" onchange="updateGs(${i},'naam',this.value)"></td>
+      <td><input type="number" value="${g.sg}" step="0.001" onchange="updateGs(${i},'sg',+this.value)"></td>
+      <td><input type="number" value="${g.prijs}" step="0.01" onchange="updateGs(${i},'prijs',+this.value)"></td>
+      <td class="actions"><button class="btn btn-danger btn-small" onclick="removeGs(${i})">✕</button></td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+function updateGs(i, field, val) {
+  SD.grondstoffen[i][field] = val;
+  rebuildMixSelects();
+  calc();
+}
+
+function removeGs(i) {
+  const id = SD.grondstoffen[i].id;
+  SD.grondstoffen.splice(i,1);
+  renderGrondstoffen();
+  // Remove mix rows using that id
+  document.querySelectorAll('.mix-select').forEach(sel => {
+    if (+sel.value === id) sel.value = '';
+  });
+  calc();
+}
+
+function addGrondstof() {
+  SD.grondstoffen.push({id: nextGsId++, naam:'Nieuw materiaal', sg:1.0, prijs:0});
+  renderGrondstoffen();
+  rebuildMixSelects();
+}
+
+// ════════════════════════════════════════════════
+// MATERIAAL MIX (calculatie)
+// ════════════════════════════════════════════════
+let mixRows = [];
+
+function addMixRow() {
+  mixRows.push({gsId:'', pct:0});
+  renderMix();
+}
+
+function setMixRow(idx, gsId, pct) {
+  if (idx < mixRows.length) {
+    mixRows[idx] = {gsId, pct};
+    renderMix();
+  }
+}
+
+function renderMix() {
+  const tbody = document.getElementById('mix-body');
+  tbody.innerHTML = '';
+  mixRows.forEach((row, i) => {
+    const gs = SD.grondstoffen.find(g => g.id === row.gsId);
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>
+        <select class="mix-select" style="width:100%;font-family:'IBM Plex Mono';font-size:12px;padding:5px 8px;border:1px solid #d8dce8;border-radius:4px;background:#f5f6fa;"
+          onchange="updateMixRow(${i},'gsId',+this.value)">
+          <option value="">– selecteer –</option>
+          ${SD.grondstoffen.map(g=>`<option value="${g.id}" ${g.id===row.gsId?'selected':''}>${g.id}. ${g.naam}</option>`).join('')}
+        </select>
+      </td>
+      <td><input type="number" value="${row.pct||''}" step="0.5" min="0" max="100"
+        style="width:100%;font-family:'IBM Plex Mono';font-size:12px;padding:5px 8px;border:1px solid #d8dce8;border-radius:4px;background:#f5f6fa;text-align:right;"
+        onchange="updateMixRow(${i},'pct',+this.value)"></td>
+      <td style="font-family:'IBM Plex Mono';font-size:12px;text-align:right;">${gs ? gs.sg.toFixed(3) : '–'}</td>
+      <td style="font-family:'IBM Plex Mono';font-size:12px;text-align:right;">${gs ? '€ '+gs.prijs.toFixed(2) : '–'}</td>
+      <td class="actions"><button class="btn btn-danger btn-small" onclick="removeMixRow(${i})">✕</button></td>
+    `;
+    tbody.appendChild(tr);
+  });
+  updateMixTotals();
+}
+
+function updateMixRow(i, field, val) {
+  mixRows[i][field] = val;
+  renderMix();
+  calc();
+}
+
+function removeMixRow(i) {
+  mixRows.splice(i,1);
+  renderMix();
+  calc();
+}
+
+function rebuildMixSelects() {
+  renderMix();
+}
+
+function updateMixTotals() {
+  const activeMix = mixRows.filter(r => r.gsId && r.pct > 0);
+  const totalPct = activeMix.reduce((s,r) => s + r.pct, 0);
+  const ptEl = document.getElementById('mix-pct-total');
+  ptEl.textContent = f2(totalPct) + '%';
+  ptEl.className = Math.abs(totalPct-100)<0.01 ? 'pct-sum-ok' : 'pct-sum-err';
+
+  if (totalPct > 0) {
+    // SG: harmonic mean weighted by mass fraction
+    let sgDenom = activeMix.reduce((s,r) => {
+      const gs = SD.grondstoffen.find(g => g.id === r.gsId);
+      return gs ? s + (r.pct / gs.sg) : s;
+    }, 0);
+    const sg = totalPct / sgDenom;
+    document.getElementById('mix-sg-result').textContent = f3(sg);
+
+    // Grondstofprijs: simple weighted mean
+    const gp = activeMix.reduce((s,r) => {
+      const gs = SD.grondstoffen.find(g => g.id === r.gsId);
+      return gs ? s + (r.pct/100 * gs.prijs) : s;
+    }, 0);
+    document.getElementById('mix-price-result').textContent = '€ ' + f3(gp);
+  } else {
+    document.getElementById('mix-sg-result').textContent = '–';
+    document.getElementById('mix-price-result').textContent = '–';
+  }
+}
+
+// ════════════════════════════════════════════════
+// CORE CALCULATION
+// ════════════════════════════════════════════════
+function calc() {
+  const breedte   = numVal('p_breedte');
+  const lengte    = numVal('p_lengte');
+  const dikte     = numVal('p_dikte');
+  const bodemvouw = numVal('p_bodemvouw');
+  const klep      = numVal('p_klep');
+  const blok      = numVal('p_blok');
+  const aantal    = numVal('p_aantal');
+  if (!breedte || !lengte || !dikte || !aantal) return;
+
+  const activeMix = mixRows.filter(r => r.gsId && r.pct > 0);
+  const totalPct  = activeMix.reduce((s,r) => s+r.pct, 0);
+  if (Math.abs(totalPct-100) > 0.1) {
+    setText('r_kostprijs_big','Mix ≠ 100%');
+    return;
+  }
+
+  // 1. Material properties
+  const sgDenom = activeMix.reduce((s,r) => {
+    const gs = SD.grondstoffen.find(g => g.id === r.gsId);
+    return gs ? s + r.pct/gs.sg : s;
+  }, 0);
+  const sg_avg = totalPct / sgDenom;
+
+  const grondstofprijs = activeMix.reduce((s,r) => {
+    const gs = SD.grondstoffen.find(g => g.id === r.gsId);
+    return gs ? s + (r.pct/100)*gs.prijs : s;
+  }, 0);
+
+  // 2. Weight (exact Excel formula)
+  // gewicht_kg = (breedte/100) × [(lengte/100)+(klep/200)+(blok/200)+(bodemvouw/100)] × (dikte×2) × aantal × sg_avg
+  const gewicht_kg = (breedte/100) * ((lengte/100)+(klep/200)+(blok/200)+(bodemvouw/100)) * (dikte*2) * aantal * sg_avg;
+  const gew_per_1000 = gewicht_kg / aantal * 1000; // kg/1000
+
+  // 3. Afval
+  const afvalPct    = SD.extrusie.afvalPct;
+  const handelaar   = document.querySelector('input[name="handelaar"]:checked')?.value === 'j';
+  const extrPrijs   = handelaar ? SD.extrusie.handel : SD.extrusie.alg;
+  const afval_per_kg= afvalPct/100 * (extrPrijs + grondstofprijs);
+  const gew_incl_afval = gew_per_1000 * (1 + afvalPct/100);
+
+  // 4. Combined price per kg
+  const prijs_per_kg_total = extrPrijs + grondstofprijs + afval_per_kg;
+
+  // Cost components per 1000
+  const k_materiaal = gew_per_1000 * grondstofprijs * (1 + afvalPct/100);
+  const k_extrusie  = gew_per_1000 * extrPrijs * (1 + afvalPct/100);
+  // (combined via prijs_per_kg for consistency)
+  // Actually split properly:
+  const k_grond_afval = gew_per_1000 * (grondstofprijs + afvalPct/100 * grondstofprijs);
+  const k_extr_afval  = gew_per_1000 * (extrPrijs + afvalPct/100 * extrPrijs);
+  // Simpler: H77 = gew_per_1000 * (extrusie + grondstof + afval_per_kg)
+  const H77 = gew_per_1000 * prijs_per_kg_total;
+
+  // 5. Machine selection
+  const pp         = document.querySelector('input[name="pp"]:checked')?.value === 'j';
+  const machineTyp = strVal('p_machine');
+  const {machine, speed, sealPer1000} = getSealCost(aantal, machineTyp, dikte, pp);
+
+  // 6. Printing
+  const positiedruk = document.querySelector('input[name="positiedruk"]:checked')?.value === 'j';
+  let k_druk = 0;
+  let k_inkt = 0;
+  if (positiedruk) {
+    const kleuren = numVal('p_kleuren') || 1;
+    // folie meters = aantal × breedte / 100 (for 1 baan)
+    const foliemeter = aantal * (breedte/100);
+    const banen = machine === 'Dubbele Wicket' ? 2 : 1;
+    const foliem_adjusted = foliemeter / banen;
+    // Use druk machine 1 by default (can be extended)
+    const dm = SD.druk.d1;
+    const setupUren = kleuren * (dm.setup/60);
+    const drukUren = foliem_adjusted / dm.speed + setupUren;
+    const totDruk = drukUren * dm.prijs;
+    k_druk = totDruk / aantal * 1000;
+    // ink cost
+    const inkpct = SD.drukOppervlak / 100;
+    k_inkt = gew_per_1000 * SD.inktprijs * inkpct;
+  }
+
+  // 7. Kleefstrip
+  let k_kleefstrip = 0;
+  const klstr = strVal('p_kleefstrip');
+  if (klstr === 'hersluitbaar') k_kleefstrip = breedte * SD.kosten.klstrHerslt / 100;
+  if (klstr === 'permanent')    k_kleefstrip = breedte * SD.kosten.klstrPerm  / 100;
+
+  // 8. Other costs
+  const k_dozen    = gew_per_1000 * SD.kosten.dozen;
+  const k_handling = gew_per_1000 * SD.kosten.handling;
+  const k_energie  = gew_per_1000 * SD.kosten.energie;
+
+  // 9. Pallet + freight
+  const aantPallets = Math.ceil(gewicht_kg / SD.kosten.palletMaxKg) || 1;
+  const isBelgie    = document.querySelector('input[name="verzend"]:checked')?.value === 'be';
+  const vrachtPP    = isBelgie ? SD.kosten.vrachtBE : SD.kosten.vrachtNL;
+  const k_pallet    = (SD.kosten.pallet * aantPallets + vrachtPP * aantPallets) / aantal * 1000;
+
+  // 10. Total cost per 1000
+  const kostprijs = H77 + sealPer1000 + k_druk + k_inkt + k_kleefstrip +
+                    k_dozen + k_handling + k_energie + k_pallet;
+
+  calcResult = {
+    breedte, lengte, dikte, bodemvouw, klep, blok, aantal,
+    sg_avg, grondstofprijs, gew_per_1000, gew_incl_afval,
+    gewicht_kg, machine, speed, sealPer1000,
+    H77, k_druk, k_inkt, k_kleefstrip,
+    k_dozen, k_handling, k_energie, k_pallet,
+    kostprijs, aantPallets, extrPrijs, afvalPct
+  };
+
+  // ─── Display ───
+  const mtrBuis = aantal * (breedte/200); // C49
+  setText('r_gew_stuk',      f4(gewicht_kg/aantal*1000) + ' g');
+  setText('r_gew_1000',      f3(gew_per_1000) + ' kg');
+  setText('r_gew_afval',     f3(gew_incl_afval) + ' kg');
+  setText('r_gew_tot',       f2(gewicht_kg) + ' kg');
+  setText('r_sg',            f4(sg_avg));
+  setText('r_grondprijs',    '€ ' + f4(grondstofprijs));
+  setText('r_machine_type',  machine);
+  setText('r_snelheid',      f0(speed) + ' st/uur');
+  setText('r_uren',          f2(aantal/speed) + ' uur');
+  setText('r_extrmtr',       f0(mtrBuis) + ' m');
+  setText('r_k_grond',       '€ ' + f3(H77 - sealPer1000 > 0 ? k_grond_afval + k_extr_afval : H77));
+  setText('r_k_extr',        '€ ' + f3(k_extr_afval));
+  setText('r_k_seal',        '€ ' + f3(sealPer1000));
+  setText('r_k_druk',        '€ ' + f3(k_druk));
+  setText('r_k_inkt',        '€ ' + f3(k_inkt));
+  setText('r_k_klstr',       k_kleefstrip > 0 ? '€ ' + f3(k_kleefstrip) : '–');
+  setText('r_k_dozen',       '€ ' + f3(k_dozen + k_handling));
+  setText('r_k_energie',     '€ ' + f3(k_energie));
+  setText('r_k_vracht',      '€ ' + f3(k_pallet));
+  setText('r_kostprijs',     '€ ' + f3(kostprijs));
+  setText('r_kostprijs_big', '€ ' + f3(kostprijs));
+  setText('r_kostprijs_sub', `${f3(gew_per_1000)} kg/1000 · ${machine} · ${f0(speed)} st/uur`);
+  setText('r_totaal_order',  '€ ' + f2(kostprijs * aantal / 1000));
+
+  // Update offerte
+  updateOffertePrices();
+}
+
+function getSealCost(aantal, machineTyp, dikte, pp) {
+  let type;
+  if (machineTyp === 'auto') {
+    type = (dikte >= 0.05 || pp) ? 'enkel' : (aantal > 50000 ? 'dubbel' : 'enkel');
+  } else {
+    type = machineTyp;
+  }
+  const m = type === 'dubbel' ? SD.machines.dubbel : SD.machines.enkel;
+  let speed = aantal <= 25000 ? m.s1 : (aantal <= 50000 ? m.s2 : m.s3);
+  if (pp && type === 'enkel')  speed = Math.round(speed * m.ppFactor);
+  if (dikte > 0.05)            speed = Math.round(speed * m.dikteFactor);
+  const sealPer1000 = (1000/speed) * m.prijs;
+  return {
+    machine: type === 'dubbel' ? 'Dubbele Wicket' : 'Enkele Wicket',
+    speed, sealPer1000
+  };
+}
+
+// ════════════════════════════════════════════════
+// VALIDATION
+// ════════════════════════════════════════════════
+function validateDims() {
+  const b = numVal('p_breedte'), l = numVal('p_lengte'), d = numVal('p_dikte');
+  const bv= numVal('p_bodemvouw'), kl=numVal('p_klep'), bl=numVal('p_blok');
+  const warns = [];
+  if (b < 11 || b > 37) warns.push('⚠ Breedte buiten machinebereik (11–37 cm)');
+  if (d < 0.02) warns.push('⚠ Dikte te dun (min. 0,02 mm)');
+  if (d > 0.07) warns.push('⚠ Dikte te dik (max. 0,07 mm)');
+  if (kl < 3 || kl > 10) warns.push('⚠ Klep buiten bereik (3–10 cm)');
+  document.getElementById('dim-warnings').innerHTML =
+    warns.map(w=>`<div class="badge badge-warn">${w}</div>`).join(' ');
+  calc();
+}
+
+function togglePrint() {
+  const on = document.getElementById('r_pos_j').checked;
+  document.getElementById('field-kleuren').style.display = on ? '' : 'none';
+  document.getElementById('field-afslag').style.display  = on ? '' : 'none';
+  calc();
+}
+
+// ════════════════════════════════════════════════
+// OFFERTE
+// ════════════════════════════════════════════════
+function updateMarge() {
+  const v = document.getElementById('marge_slider').value;
+  document.getElementById('marge_input').value = v;
+  document.getElementById('marge_display').textContent = v + '%';
+  updateOffertePrices();
+  renderOfferte();
+}
+
+function updateMargeInput() {
+  const v = document.getElementById('marge_input').value;
+  document.getElementById('marge_slider').value = v;
+  document.getElementById('marge_display').textContent = v + '%';
+  updateOffertePrices();
+  renderOfferte();
+}
+
+function updateOffertePrices() {
+  if (!calcResult) return;
+  const marge = numVal('marge_input') || numVal('marge_slider') || 10;
+  const kp = calcResult.kostprijs;
+  const marge_bed = kp * marge/100;
+  const verkoop = kp + marge_bed;
+  const totaal = verkoop * calcResult.aantal / 1000;
+  setText('o_kostprijs',   '€ ' + f3(kp));
+  setText('o_marge_bedrag','€ ' + f3(marge_bed));
+  setText('o_verkoop',     '€ ' + f3(verkoop));
+  setText('o_totaal',      '€ ' + f2(totaal));
+}
+
+function getVerkoopprijs() {
+  if (!calcResult) return 0;
+  const marge = numVal('marge_input') || 10;
+  let vp = calcResult.kostprijs * (1 + marge/100);
+  const afr = +document.querySelector('input[name="afronden"]:checked')?.value || 0;
+  if (afr > 0) vp = Math.ceil(vp/afr)*afr;
+  return vp;
+}
+
+function renderOfferte() {
+  updateOffertePrices();
+  const lang = document.querySelector('input[name="offtaal"]:checked')?.value || 'nl';
+  const vp = getVerkoopprijs();
+  const aantal = calcResult?.aantal || 0;
+  const marge = numVal('marge_input') || 10;
+  const bedrijf = strVal('c_bedrijf') || '–';
+  const contact = strVal('c_contact') || '–';
+  const email   = strVal('c_email') || '';
+  const omschrijving = strVal('c_omschrijving') || '–';
+  const b = calcResult?.breedte||0, l=calcResult?.lengte||0, d=calcResult?.dikte||0;
+  const bv=calcResult?.bodemvouw||0, kl=calcResult?.klep||0;
+  const levertijd = numVal('o_levertijd') || 3;
+  const verkoper  = strVal('o_verkoper') || '';
+  const nummer    = strVal('o_nummer') || 'AVI-' + new Date().getFullYear() + '-xxx';
+  const priceDisplay = document.querySelector('input[name="prijs_display"]:checked')?.value || 'per1000';
+  const datum = new Date().toLocaleDateString(lang==='en'?'en-GB':lang==='de'?'de-DE':'nl-NL',{day:'2-digit',month:'2-digit',year:'numeric'});
+
+  const totaalBedrag = vp * aantal / 1000;
+
+  // Translations
+  const T = {
+    nl: {
+      title:'OFFERTE', dear:'Geachte heer/mevrouw,', intro:'Naar aanleiding van uw aanvraag hebben wij het genoegen u vrijblijvend aan te bieden:',
+      desc:'Omschrijving', qty:'Hoeveelheid', price:'Prijs', unit_qty:'stuks', unit_per:'per 1.000 stuks',
+      width:'breedte', length:'lengte', thick:'dikte', fold:'bodem', flap:'klep',
+      levertijd:'Levertijd', levertijdVal:levertijd+' weken na ontvangst order',
+      betaling:'Betalingsconditie', betalingVal:'30 dagen na factuurdatum',
+      dagprijzen:'Momenteel hanteren wij dagprijzen. Wij behouden ons het recht voor om de prijs aan te passen mocht deze op het moment van produceren significant zijn gewijzigd.',
+      exbtw:'Prijzen zijn exclusief BTW.', closing:'Wij danken u voor uw aanvraag en zien uw order graag tegemoet.',
+      greeting:'Met vriendelijke groet,', refus:'Uw ref.:', ourref:'Onze ref.:', behandeld:'Behandeld door:'
+    },
+    de: {
+      title:'ANGEBOT', dear:'Sehr geehrte Damen und Herren,', intro:'Aufgrund Ihrer Anfrage unterbreiten wir Ihnen folgendes Angebot:',
+      desc:'Beschreibung', qty:'Menge', price:'Preis', unit_qty:'Stück', unit_per:'pro 1.000 Stück',
+      width:'Breite', length:'Länge', thick:'Dicke', fold:'Bodenfalte', flap:'Lasche',
+      levertijd:'Lieferzeit', levertijdVal:levertijd+' Wochen ab Auftragseingang',
+      betaling:'Zahlungsbedingung', betalingVal:'30 Tage nach Rechnungsdatum',
+      dagprijzen:'Wir benutzen aktuell Tagespreise. Wir behalten uns vor, den Preis anzupassen, sollte er sich zum Zeitpunkt der Produktion wesentlich geändert haben.',
+      exbtw:'Preise sind exklusive MwSt.', closing:'Wir danken Ihnen für Ihre Anfrage.',
+      greeting:'Mit freundlichen Grüßen,', refus:'Ihre Ref.:', ourref:'Unsere Ref.:', behandeld:'Bearbeitet von:'
+    },
+    en: {
+      title:'OFFER', dear:'Dear Sir/Madam,', intro:'Based on your request, we herewith offer you without engagement:',
+      desc:'Description', qty:'Quantity', price:'Price', unit_qty:'pieces', unit_per:'per 1,000 pieces',
+      width:'width', length:'length', thick:'thickness', fold:'sidefold', flap:'flap',
+      levertijd:'Lead time', levertijdVal:levertijd+' weeks from receipt of order',
+      betaling:'Payment terms', betalingVal:'30 days after invoice date',
+      dagprijzen:'We currently use day prices. We reserve the right to adjust the price if it changes significantly at the time of production.',
+      exbtw:'Prices are exclusive of VAT.', closing:'We look forward to receiving your order.',
+      greeting:'Yours sincerely,', refus:'Your ref.:', ourref:'Our ref.:', behandeld:'Handled by:'
+    }
+  }[lang];
+
+  const priceStr = priceDisplay === 'per1000'
+    ? `€ ${f3(vp)} ${T.unit_per}`
+    : `€ ${f2(totaalBedrag)}`;
+
+  const dimStr = `${b} cm ${T.width} × ${l} cm ${T.length} × ${d} mm ${T.thick}`;
+  const dimStr2 = bv>0 ? `+ ${bv} cm ${T.fold}` : '';
+  const dimStr3 = kl>0 ? `+ ${kl} cm ${T.flap}` : '';
+
+  document.getElementById('offerte-output').innerHTML = `
+    <div class="company-header">
+      <div>
+        <div style="font-size:15px;font-weight:700;margin-bottom:2px;">${bedrijf}</div>
+        <div style="color:var(--gray-600);">${contact}</div>
+        ${email?`<div style="color:var(--gray-600);font-size:11px;">${email}</div>`:''}
+        <div style="margin-top:12px;font-size:11px;color:var(--gray-400);">${T.refus} &nbsp;|&nbsp; ${T.ourref} ${nummer}</div>
+      </div>
+      <div class="avi-info">
+        <img src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPHN2ZyBpZD0iTGF5ZXJfMSIgZGF0YS1uYW1lPSJMYXllciAxIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB2aWV3Qm94PSIwIDAgMzgwIDE1MCI+CiAgPGRlZnM+CiAgICA8c3R5bGU+CiAgICAgIC5jbHMtMSB7CiAgICAgICAgZmlsbDogIzcyYmFkMTsKICAgICAgfQoKICAgICAgLmNscy0yIHsKICAgICAgICBmaWxsOiAjMDI1YTdhOwogICAgICB9CgogICAgICAuY2xzLTMsIC5jbHMtNCwgLmNscy01IHsKICAgICAgICBpc29sYXRpb246IGlzb2xhdGU7CiAgICAgIH0KCiAgICAgIC5jbHMtNCB7CiAgICAgICAgZmlsbDogdXJsKCNsaW5lYXItZ3JhZGllbnQpOwogICAgICB9CgogICAgICAuY2xzLTQsIC5jbHMtNSB7CiAgICAgICAgbWl4LWJsZW5kLW1vZGU6IG11bHRpcGx5OwogICAgICAgIG9wYWNpdHk6IC42OwogICAgICB9CgogICAgICAuY2xzLTYgewogICAgICAgIHN0cm9rZTogIzcyYmFkMTsKICAgICAgICBzdHJva2UtbWl0ZXJsaW1pdDogMTA7CiAgICAgICAgc3Ryb2tlLXdpZHRoOiA1cHg7CiAgICAgIH0KCiAgICAgIC5jbHMtNiwgLmNscy03IHsKICAgICAgICBmaWxsOiAjZmZmOwogICAgICB9CgogICAgICAuY2xzLTUgewogICAgICAgIGZpbGw6IHVybCgjbGluZWFyLWdyYWRpZW50LTIpOwogICAgICB9CiAgICA8L3N0eWxlPgogICAgPGxpbmVhckdyYWRpZW50IGlkPSJsaW5lYXItZ3JhZGllbnQiIHgxPSI1OS4zOCIgeTE9Ijc3IiB4Mj0iNTkuMzgiIHkyPSI5OC42NyIgZ3JhZGllbnRUcmFuc2Zvcm09InRyYW5zbGF0ZSgwIDE1Mikgc2NhbGUoMSAtMSkiIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIj4KICAgICAgPHN0b3Agb2Zmc2V0PSIwIiBzdG9wLWNvbG9yPSIjZmZmIi8+CiAgICAgIDxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iIzFkMWQxYiIvPgogICAgPC9saW5lYXJHcmFkaWVudD4KICAgIDxsaW5lYXJHcmFkaWVudCBpZD0ibGluZWFyLWdyYWRpZW50LTIiIHgxPSItNTk4MS4wMSIgeTE9IjExMDE1Ljk3IiB4Mj0iLTU5ODEuMDEiIHkyPSIxMTAzNy42NiIgZ3JhZGllbnRUcmFuc2Zvcm09InRyYW5zbGF0ZSgtNTkwNS4zOSAtMTA5NDEpIHJvdGF0ZSgtMTgwKSBzY2FsZSgxIC0xKSIgZ3JhZGllbnRVbml0cz0idXNlclNwYWNlT25Vc2UiPgogICAgICA8c3RvcCBvZmZzZXQ9IjAiIHN0b3AtY29sb3I9IiNmZmYiLz4KICAgICAgPHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjMWQxZDFiIi8+CiAgICA8L2xpbmVhckdyYWRpZW50PgogIDwvZGVmcz4KICA8ZyBjbGFzcz0iY2xzLTMiPgogICAgPGcgaWQ9IkxheWVyXzEtMiIgZGF0YS1uYW1lPSJMYXllciAxIj4KICAgICAgPGc+CiAgICAgICAgPGNpcmNsZSBjbGFzcz0iY2xzLTYiIGN4PSI3Ni4xOCIgY3k9Ijc1IiByPSI2My43OCIvPgogICAgICAgIDxnPgogICAgICAgICAgPHJlY3QgY2xhc3M9ImNscy0yIiB4PSI1My40MiIgeT0iNTMuMzMiIHdpZHRoPSIxMS45MiIgaGVpZ2h0PSI0My4zMyIvPgogICAgICAgICAgPHJlY3QgY2xhc3M9ImNscy0yIiB4PSI2OS42NSIgeT0iNTMuMzMiIHdpZHRoPSIxMS45MiIgaGVpZ2h0PSI0My4zMyIvPgogICAgICAgICAgPHJlY3QgY2xhc3M9ImNscy00IiB4PSI1My40MiIgeT0iNTMuMzMiIHdpZHRoPSIxMS45MiIgaGVpZ2h0PSIyMS42NyIvPgogICAgICAgICAgPHJlY3QgY2xhc3M9ImNscy01IiB4PSI2OS42NSIgeT0iNzQuOTciIHdpZHRoPSIxMS45MiIgaGVpZ2h0PSIyMS42OSIvPgogICAgICAgICAgPHBvbHlnb24gY2xhc3M9ImNscy0xIiBwb2ludHM9Ijk0LjgzIDUzLjMzIDEwNy44MyA1My4zMyA4Mi42NSA5Ni42NiA2OS42NCA5Ni42NiA5NC44MyA1My4zMyIvPgogICAgICAgICAgPHBvbHlnb24gY2xhc3M9ImNscy0xIiBwb2ludHM9IjExMi4yMSA1My4zMyAxMjUuMjEgNTMuMzMgMTAwLjAzIDk2LjY2IDg3LjAzIDk2LjY2IDExMi4yMSA1My4zMyIvPgogICAgICAgICAgPHBvbHlnb24gY2xhc3M9ImNscy0xIiBwb2ludHM9IjQwLjE2IDk2LjY2IDI3LjE1IDk2LjY2IDUyLjMzIDUzLjMzIDY1LjM0IDUzLjMzIDQwLjE2IDk2LjY2Ii8+CiAgICAgICAgICA8cG9seWdvbiBjbGFzcz0iY2xzLTEiIHBvaW50cz0iNDcuNDQgOTMuMjUgNDAuNiA5My4yNSA0MC42IDg0LjY1IDUyLjM5IDg0LjY1IDQ3LjQ0IDkzLjI1Ii8+CiAgICAgICAgPC9nPgogICAgICA8L2c+CiAgICA8L2c+CiAgPC9nPgogIDxnPgogICAgPHBhdGggY2xhc3M9ImNscy03IiBkPSJNMTc3Ljk2LDQ4LjMzYzQuMTIsMCw3LjM0LDMuMjIsNy4zNCw4LjI0cy0zLjIyLDguMzUtNy4zNCw4LjM1Yy0yLjUyLDAtNC4zMi0xLjI1LTUuMzEtMi41NXY5Ljk1aC00LjA2di0yMy43M2g0LjA2djIuMzJjLjk2LTEuMzYsMi44MS0yLjU4LDUuMzEtMi41OFpNMTc2Ljg5LDUxLjljLTIuMTgsMC00LjI0LDEuNjgtNC4yNCw0LjczczIuMDYsNC43Myw0LjI0LDQuNzMsNC4yNi0xLjc0LDQuMjYtNC43OS0yLjA2LTQuNjctNC4yNi00LjY3WiIvPgogICAgPHBhdGggY2xhc3M9ImNscy03IiBkPSJNMTg4LjE1LDQzLjJoNC4wNnYyMS40NmgtNC4wNnYtMjEuNDZaIi8+CiAgICA8cGF0aCBjbGFzcz0iY2xzLTciIGQ9Ik0yMDIuMzUsNDguMzNjMi41OCwwLDQuMzUsMS4yMiw1LjMxLDIuNTV2LTIuMjloNC4wOXYxNi4wN2gtNC4wOXYtMi4zNWMtLjk2LDEuMzktMi43OSwyLjYxLTUuMzQsMi42MS00LjA2LDAtNy4zMS0zLjM0LTcuMzEtOC4zNXMzLjI1LTguMjQsNy4zNC04LjI0Wk0yMDMuMzksNTEuOWMtMi4xNywwLTQuMjMsMS42Mi00LjIzLDQuNjdzMi4wNiw0Ljc5LDQuMjMsNC43OSw0LjI2LTEuNjgsNC4yNi00LjczLTIuMDMtNC43My00LjI2LTQuNzNaIi8+CiAgICA8cGF0aCBjbGFzcz0iY2xzLTciIGQ9Ik0yMjEuNTksNjQuOTNjLTQuMDMsMC02Ljg1LTIuMzUtNy4wMi01LjM0aDQuMDljLjE0LDEuMjIsMS4yOCwyLjE1LDIuOSwyLjE1czIuNDctLjczLDIuNDctMS42NWMwLTIuODctOS4wOC0xLjA0LTkuMDgtNi45MywwLTIuNjcsMi4zOC00LjgyLDYuMzUtNC44MnM2LjI0LDIuMTIsNi40Nyw1LjMxaC0zLjg5Yy0uMTItMS4yNS0xLjEtMi4wOS0yLjctMi4wOS0xLjUxLDAtMi4yOS42MS0yLjI5LDEuNTQsMCwyLjkzLDguOTEsMS4xLDkuMDIsNi45OSwwLDIuNzYtMi40MSw0Ljg0LTYuMzIsNC44NFoiLz4KICAgIDxwYXRoIGNsYXNzPSJjbHMtNyIgZD0iTTIzMS40Nyw1MS45M2gtMS45MXYtMy4zNGgxLjkxdi0zLjk3aDQuMDl2My45N2gzLjZ2My4zNGgtMy42djcuNzdjMCwxLjA3LjQ0LDEuNTQsMS43MSwxLjU0aDEuODh2My40MmgtMi41NWMtMy4wNywwLTUuMTMtMS4zMS01LjEzLTQuOTl2LTcuNzVaIi8+CiAgICA8cGF0aCBjbGFzcz0iY2xzLTciIGQ9Ik0yNDEuMzYsNDQuM2MwLTEuMzMsMS4wNC0yLjM4LDIuNDktMi4zOHMyLjUsMS4wNCwyLjUsMi4zOC0xLjA3LDIuMzgtMi41LDIuMzgtMi40OS0xLjA0LTIuNDktMi4zOFpNMjQxLjc5LDQ4LjU5aDQuMDZ2MTYuMDdoLTQuMDZ2LTE2LjA3WiIvPgogICAgPHBhdGggY2xhc3M9ImNscy03IiBkPSJNMjU2LjQ2LDQ4LjMzYzQsMCw2LjcsMi4wOSw3LjU3LDUuNjloLTQuMzhjLS40Ni0xLjM2LTEuNTQtMi4yMy0zLjIyLTIuMjMtMi4yNiwwLTMuNzcsMS43MS0zLjc3LDQuODRzMS41MSw0LjgyLDMuNzcsNC44MmMxLjY4LDAsMi43My0uNzUsMy4yMi0yLjJoNC4zOGMtLjg3LDMuNDItMy41Nyw1LjY4LTcuNTcsNS42OC00LjY0LDAtNy45NS0zLjI1LTcuOTUtOC4zczMuMzEtOC4zLDcuOTUtOC4zWiIvPgogICAgPHBhdGggY2xhc3M9ImNscy03IiBkPSJNMTcxLjIzLDgzLjM5bDQuMDYsMTIuMzMsNC4wNi0xMi4zM2g0LjMybC01Ljk1LDE2LjA3aC00LjkzbC01LjkyLTE2LjA3aDQuMzVaIi8+CiAgICA8cGF0aCBjbGFzcz0iY2xzLTciIGQ9Ik0xOTIuMTQsOTkuNzNjLTQuNjcsMC04LjA2LTMuMjUtOC4wNi04LjNzMy4zMS04LjMsOC4wNi04LjMsNy45MiwzLjE2LDcuOTIsNy45NWMwLC41Mi0uMDMsMS4wNC0uMTIsMS41N2gtMTEuNzVjLjIsMi4zOCwxLjgzLDMuNzEsMy44NiwzLjcxLDEuNzQsMCwyLjctLjg3LDMuMjItMS45NGg0LjM4Yy0uODcsMi45Ni0zLjU0LDUuMzEtNy41MSw1LjMxWk0xODguMjMsODkuOTJoNy42M2MtLjA2LTIuMTItMS43NC0zLjQ1LTMuODMtMy40NS0xLjk0LDAtMy40OCwxLjI1LTMuOCwzLjQ1WiIvPgogICAgPHBhdGggY2xhc3M9ImNscy03IiBkPSJNMjA2Ljg4LDk5LjQ3aC00LjA2di0xNi4wN2g0LjA2djIuNWMxLjAyLTEuNjUsMi43LTIuNzMsNC45My0yLjczdjQuMjZoLTEuMDdjLTIuNDEsMC0zLjg2LjkzLTMuODYsNC4wM3Y4LjAxWiIvPgogICAgPHBhdGggY2xhc3M9ImNscy03IiBkPSJNMjIzLjM1LDgzLjEzYzQuMTIsMCw3LjM0LDMuMjIsNy4zNCw4LjI0cy0zLjIyLDguMzUtNy4zNCw4LjM1Yy0yLjUyLDAtNC4zMi0xLjI1LTUuMzEtMi41NXY5Ljk1aC00LjA2di0yMy43M2g0LjA2djIuMzJjLjk2LTEuMzYsMi44MS0yLjU4LDUuMzEtMi41OFpNMjIyLjI4LDg2LjdjLTIuMTgsMC00LjI0LDEuNjgtNC4yNCw0LjczczIuMDYsNC43Myw0LjI0LDQuNzMsNC4yNi0xLjc0LDQuMjYtNC43OS0yLjA2LTQuNjctNC4yNi00LjY3WiIvPgogICAgPHBhdGggY2xhc3M9ImNscy03IiBkPSJNMjM5LjksODMuMTNjMi41OCwwLDQuMzUsMS4yMiw1LjMxLDIuNTV2LTIuMjloNC4wOXYxNi4wN2gtNC4wOXYtMi4zNWMtLjk2LDEuMzktMi43OSwyLjYxLTUuMzQsMi42MS00LjA2LDAtNy4zMS0zLjM0LTcuMzEtOC4zNXMzLjI1LTguMjQsNy4zNC04LjI0Wk0yNDAuOTQsODYuN2MtMi4xNywwLTQuMjMsMS42Mi00LjIzLDQuNjdzMi4wNiw0Ljc5LDQuMjMsNC43OSw0LjI2LTEuNjgsNC4yNi00LjczLTIuMDMtNC43My00LjI2LTQuNzNaIi8+CiAgICA8cGF0aCBjbGFzcz0iY2xzLTciIGQ9Ik0yNTMuMDMsNzhoNC4wNnYxMi4yMWw1LjQtNi44Mmg1LjI4bC03LjA4LDguMDYsNy4xNCw4LjAxaC01LjI4bC01LjQ1LTYuODV2Ni44NWgtNC4wNnYtMjEuNDZaIi8+CiAgICA8cGF0aCBjbGFzcz0iY2xzLTciIGQ9Ik0yNjkuNzMsNzhoNC4wNnYxMi4yMWw1LjQtNi44Mmg1LjI4bC03LjA4LDguMDYsNy4xNCw4LjAxaC01LjI4bC01LjQ1LTYuODV2Ni44NWgtNC4wNnYtMjEuNDZaIi8+CiAgICA8cGF0aCBjbGFzcz0iY2xzLTciIGQ9Ik0yODYuMDEsNzkuMWMwLTEuMzMsMS4wNC0yLjM4LDIuNDktMi4zOHMyLjUsMS4wNCwyLjUsMi4zOC0xLjA3LDIuMzgtMi41LDIuMzgtMi40OS0xLjA0LTIuNDktMi4zOFpNMjg2LjQ0LDgzLjM5aDQuMDZ2MTYuMDdoLTQuMDZ2LTE2LjA3WiIvPgogICAgPHBhdGggY2xhc3M9ImNscy03IiBkPSJNMzA1LjQ2LDkwLjU5YzAtMi41OC0xLjQyLTMuOTctMy41Ny0zLjk3cy0zLjYzLDEuMzktMy42MywzLjk3djguODhoLTQuMDZ2LTE2LjA3aDQuMDZ2MmMxLjA0LTEuMzYsMi43OC0yLjIzLDQuODQtMi4yMywzLjc0LDAsNi40MSwyLjQ0LDYuNDEsNi44N3Y5LjQzaC00LjA2di04Ljg4WiIvPgogICAgPHBhdGggY2xhc3M9ImNscy03IiBkPSJNMzE5LjQ5LDgzLjEzYzIuNTIsMCw0LjM1LDEuMTYsNS4zMSwyLjU1di0yLjI5aDQuMDl2MTYuMTljMCw0LjM1LTIuNjcsNy44LTcuOTUsNy44LTQuNTIsMC03LjY5LTIuMjYtOC4wOS01Ljk1aDQuMDNjLjQxLDEuNDUsMS45MSwyLjQxLDMuOTQsMi40MSwyLjIzLDAsMy45Ny0xLjI4LDMuOTctNC4yNnYtMi41Yy0uOTYsMS4zOS0yLjc5LDIuNjQtNS4zMSwyLjY0LTQuMDksMC03LjM0LTMuMzQtNy4zNC04LjM1czMuMjUtOC4yNCw3LjM0LTguMjRaTTMyMC41NCw4Ni43Yy0yLjE3LDAtNC4yMywxLjYyLTQuMjMsNC42N3MyLjA2LDQuNzksNC4yMyw0Ljc5LDQuMjYtMS42OCw0LjI2LTQuNzMtMi4wMy00LjczLTQuMjYtNC43M1oiLz4KICAgIDxwYXRoIGNsYXNzPSJjbHMtNyIgZD0iTTMzOS43NSw5OS43M2MtNC42NywwLTguMDYtMy4yNS04LjA2LTguM3MzLjMxLTguMyw4LjA2LTguMyw3LjkyLDMuMTYsNy45Miw3Ljk1YzAsLjUyLS4wMywxLjA0LS4xMiwxLjU3aC0xMS43NWMuMiwyLjM4LDEuODMsMy43MSwzLjg2LDMuNzEsMS43NCwwLDIuNy0uODcsMy4yMi0xLjk0aDQuMzhjLS44NywyLjk2LTMuNTQsNS4zMS03LjUxLDUuMzFaTTMzNS44Myw4OS45Mmg3LjYzYy0uMDYtMi4xMi0xLjc0LTMuNDUtMy44My0zLjQ1LTEuOTQsMC0zLjQ4LDEuMjUtMy44LDMuNDVaIi8+CiAgICA8cGF0aCBjbGFzcz0iY2xzLTciIGQ9Ik0zNjEuNjgsOTAuNTljMC0yLjU4LTEuNDItMy45Ny0zLjU3LTMuOTdzLTMuNjMsMS4zOS0zLjYzLDMuOTd2OC44OGgtNC4wNnYtMTYuMDdoNC4wNnYyYzEuMDQtMS4zNiwyLjc4LTIuMjMsNC44NC0yLjIzLDMuNzQsMCw2LjQxLDIuNDQsNi40MSw2Ljg3djkuNDNoLTQuMDZ2LTguODhaIi8+CiAgPC9nPgo8L3N2Zz4=" alt="AVI Volendam" style="height:56px;">
+        <div class="avi-name" style="display:none;">Algemene Verpakkings Industrie bv</div>
+        <div>Parallelweg 2, 1131 DM  Volendam</div>
+        <div>Telefoon +31 (0)299-364330</div>
+        <div>www.avi-volendam.nl</div>
+        <div>verkoop@avi-volendam.nl</div>
+        <div style="margin-top:8px;color:var(--gray-400);">Volendam, ${datum}</div>
+        ${verkoper?`<div>${T.behandeld} ${verkoper}</div>`:''}
+      </div>
+    </div>
+
+    <h2>${T.title}</h2>
+
+    <p>${T.dear}</p>
+    <p style="margin-top:8px;">${T.intro}</p>
+
+    <table class="product-table">
+      <thead><tr>
+        <th style="width:55%">${T.desc}</th>
+        <th style="width:20%;text-align:right;">${T.qty}</th>
+        <th style="width:25%;text-align:right;">${T.price}</th>
+      </tr></thead>
+      <tbody>
+        <tr>
+          <td>
+            <strong>${omschrijving}</strong><br>
+            <span style="font-size:12px;color:var(--gray-600);">${dimStr}</span>
+            ${dimStr2?`<br><span style="font-size:12px;color:var(--gray-600);">${dimStr2}</span>`:''}
+            ${dimStr3?`<br><span style="font-size:12px;color:var(--gray-600);">${dimStr3}</span>`:''}
+          </td>
+          <td style="text-align:right;vertical-align:top;">
+            <strong style="font-family:'IBM Plex Mono';">${f0(aantal)}</strong><br>
+            <span style="font-size:11px;color:var(--gray-600);">${T.unit_qty}</span>
+          </td>
+          <td class="price-col" style="vertical-align:top;">
+            <strong style="font-size:15px;">${priceStr}</strong>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p style="font-size:11px;color:var(--gray-600);margin-top:4px;">${T.dagprijzen}</p>
+    <p style="font-size:11px;color:var(--gray-600);margin-top:4px;">${T.exbtw}</p>
+
+    <table style="margin-top:16px;font-size:13px;">
+      <tr><td style="width:160px;font-weight:600;padding-right:16px;">${T.levertijd}</td><td>${T.levertijdVal}</td></tr>
+      <tr><td style="font-weight:600;padding-right:16px;">${T.betaling}</td><td>${T.betalingVal}</td></tr>
+    </table>
+
+    <div class="footer-text" style="margin-top:24px;">
+      ${T.closing}<br><br>
+      ${T.greeting}<br>
+      <strong>AVI / Algemene Verpakkings Industrie B.V.</strong>
+    </div>
+  `;
+}
+
+// ════════════════════════════════════════════════
+// HELPERS
+// ════════════════════════════════════════════════
+function setVal(id, v) { const el=document.getElementById(id); if(el) el.value=v; }
+function numVal(id) { const el=document.getElementById(id); return el ? +el.value : 0; }
+function strVal(id) { const el=document.getElementById(id); return el ? el.value : ''; }
+function setText(id,v) { const el=document.getElementById(id); if(el) el.textContent=v; }
+function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;'); }
+function f0(n) { return Number(n).toLocaleString('nl-NL',{maximumFractionDigits:0}); }
+function f2(n) { return Number(n).toLocaleString('nl-NL',{minimumFractionDigits:2,maximumFractionDigits:2}); }
+function f3(n) { return Number(n).toLocaleString('nl-NL',{minimumFractionDigits:3,maximumFractionDigits:3}); }
+function f4(n) { return Number(n).toLocaleString('nl-NL',{minimumFractionDigits:4,maximumFractionDigits:4}); }
+</script>
+</body>
+</html>
