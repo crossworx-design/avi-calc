@@ -1,0 +1,1588 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AVI Volendam — Calculatiemodule</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#025a7a;--nav2:#036c96;--teal:#74c4d6;--teal2:#5ab2c5;--off:#f4f8fa;--g100:#edf3f6;--g200:#ccdde4;--g400:#7a9ead;--g600:#2e6b87;--green:#2d8a4e;--red:#c0392b;--text:#0d3a4e;--r:7px;--sh:0 2px 8px rgba(2,90,122,.10);--shl:0 8px 32px rgba(2,90,122,.16);}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:"Poppins",sans-serif;font-size:14px;background:var(--off);color:var(--text);min-height:100vh;}
+.header{background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 28px;height:62px;position:sticky;top:0;z-index:100;box-shadow:var(--shl);}
+.header-brand{display:flex;align-items:center;gap:12px;}
+.header-title{font-size:17px;font-weight:600;}
+.header-sub{font-size:11px;opacity:.65;margin-top:1px;}
+.header-date{font-family:"IBM Plex Mono",monospace;font-size:11px;opacity:.5;}
+.nav{background:var(--navy);border-bottom:2px solid var(--teal);display:flex;padding:0 20px;}
+.nav-btn{padding:13px 20px;background:none;border:none;color:rgba(255,255,255,.6);font-family:"Poppins",sans-serif;font-size:13px;font-weight:500;cursor:pointer;position:relative;transition:color .2s;}
+.nav-btn:hover{color:#fff;}
+.nav-btn.active{color:#fff;font-weight:600;}
+.nav-btn.active::after{content:"";position:absolute;bottom:-2px;left:0;right:0;height:2px;background:var(--teal);}
+.wrap{max-width:1300px;margin:0 auto;padding:0 20px;}
+.tab{display:none;padding:24px 0;}
+.tab.active{display:block;}
+.card{background:#fff;border-radius:var(--r);border:1px solid var(--g200);box-shadow:var(--sh);margin-bottom:18px;}
+.ch{background:var(--navy);color:#fff;padding:11px 18px;border-radius:var(--r) var(--r) 0 0;font-weight:600;font-size:13px;display:flex;align-items:center;justify-content:space-between;gap:8px;}
+.cb{padding:16px;}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;}
+.f{margin-bottom:12px;}
+.f label{display:block;font-size:10px;font-weight:600;color:var(--g600);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;}
+.f input,.f select{width:100%;padding:7px 10px;border:1.5px solid var(--g200);border-radius:var(--r);font-family:"IBM Plex Mono",monospace;font-size:13px;background:var(--off);color:var(--text);transition:border-color .15s;}
+.f input:focus,.f select:focus{outline:none;border-color:var(--teal2);background:#fff;}
+.f .hint{font-size:10px;color:var(--g400);margin-top:3px;}
+.rg{display:flex;gap:10px;margin-top:4px;}
+.rg label{display:flex;align-items:center;gap:5px;font-size:13px;font-weight:400;text-transform:none;letter-spacing:0;cursor:pointer;}
+.rg input[type=radio]{width:auto;}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:var(--r);font-family:"Poppins",sans-serif;font-size:13px;font-weight:500;cursor:pointer;border:none;transition:all .15s;}
+.bp{background:var(--teal);color:#fff;}.bp:hover{background:var(--teal2);}
+.bs{background:var(--g100);color:var(--text);border:1px solid var(--g200);}.bs:hover{background:var(--g200);}
+.bd{background:#fde8e8;color:var(--red);border:1px solid #f5c6c6;}
+.sm{padding:4px 9px;font-size:12px;}
+.dt{width:100%;border-collapse:collapse;font-size:13px;}
+.dt th{background:var(--g100);color:var(--g600);font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;padding:7px 11px;text-align:left;border-bottom:2px solid var(--g200);}
+.dt td{padding:7px 11px;border-bottom:1px solid var(--g100);font-family:"IBM Plex Mono",monospace;}
+.dt td.lc{font-family:"Poppins",sans-serif;font-weight:500;}
+.dt tr:last-child td{border-bottom:none;}
+.dt tr:hover td{background:var(--off);}
+.dt .nr{text-align:right;}
+.dt .ac{text-align:right;white-space:nowrap;}
+.dt tfoot td{background:var(--navy);color:#fff;font-weight:600;border-top:2px solid var(--teal);}
+.rh{background:linear-gradient(135deg,var(--navy),var(--nav2));color:#fff;border-radius:var(--r);padding:16px 20px;display:flex;align-items:center;justify-content:space-between;}
+.rh .mv{font-family:"IBM Plex Mono",monospace;font-size:28px;font-weight:700;color:var(--teal);}
+.rh .sub{font-size:11px;color:rgba(255,255,255,.6);margin-top:3px;}
+.st{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--navy);margin:14px 0 9px;padding-bottom:4px;border-bottom:1px solid var(--g200);}
+.it input{width:100%;padding:4px 6px;border:1px solid var(--g200);border-radius:4px;font-family:"IBM Plex Mono",monospace;font-size:12px;background:var(--off);}
+.it input:focus{outline:none;border-color:var(--teal2);background:#fff;}
+.pg{display:grid;grid-template-columns:repeat(auto-fill,minmax(165px,1fr));gap:12px;margin-bottom:18px;}
+.pc{background:#fff;border:2px solid var(--g200);border-radius:10px;padding:18px 12px;text-align:center;cursor:pointer;transition:all .2s;}
+.pc:hover{border-color:var(--navy);transform:translateY(-2px);box-shadow:var(--sh);}
+.pc.ap{border-color:var(--teal);background:#e6f6fa;}
+.pc .ic{font-size:26px;margin-bottom:7px;}
+.pc .nm{font-weight:600;font-size:13px;}
+.ow{overflow-x:auto;}
+.sb{display:inline-block;padding:2px 7px;border-radius:20px;font-size:10px;font-weight:700;text-transform:uppercase;}
+.sc{background:#edf3f6;color:var(--g600);}
+.sv{background:#fff8e1;color:#856404;}
+.sg{background:#d4f4e2;color:var(--green);}
+.sl{background:#fde8e8;color:var(--red);}
+.fr{display:flex;gap:9px;align-items:center;flex-wrap:wrap;margin-bottom:11px;}
+.fr select,.fr input{padding:5px 9px;border:1.5px solid var(--g200);border-radius:var(--r);font-family:"Poppins",sans-serif;font-size:12px;background:var(--off);}
+.mo{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:500;align-items:center;justify-content:center;}
+.mo.op{display:flex;}
+.md{background:#fff;border-radius:10px;padding:24px 28px;max-width:440px;width:90%;box-shadow:var(--shl);}
+.md h3{font-size:15px;font-weight:700;margin-bottom:13px;color:var(--navy);}
+.md .f{margin-bottom:11px;}
+.md .f label{display:block;font-size:10px;font-weight:600;color:var(--g600);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px;}
+.md .f input,.md .f select,.md .f textarea{width:100%;padding:6px 9px;border:1.5px solid var(--g200);border-radius:var(--r);font-family:"Poppins",sans-serif;font-size:13px;}
+.md .f textarea{min-height:55px;resize:vertical;}
+.mf{display:flex;gap:8px;justify-content:flex-end;margin-top:14px;}
+.op2{background:#fff;border:1px solid var(--g200);padding:30px 34px;font-family:"Poppins",sans-serif;font-size:13px;line-height:1.7;min-height:380px;}
+.op2 .coh{display:flex;justify-content:space-between;margin-bottom:26px;}
+.op2 .ai{text-align:right;font-size:12px;color:var(--g600);}
+.op2 .an{font-weight:700;font-size:14px;color:var(--navy);}
+.op2 h2{color:var(--navy);font-size:16px;font-weight:700;margin:0 0 16px;padding-bottom:6px;border-bottom:2px solid var(--teal);}
+.op2 .pt{width:100%;border-collapse:collapse;margin:16px 0;font-size:13px;}
+.op2 .pt th{background:var(--off);padding:7px 11px;text-align:left;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:var(--g600);border-bottom:1px solid var(--g200);}
+.op2 .pt td{padding:10px 11px;border-bottom:1px solid var(--g100);}
+.op2 .pt .pc2{text-align:right;font-family:"IBM Plex Mono",monospace;font-weight:600;}
+.mc{display:flex;align-items:center;gap:13px;background:var(--g100);padding:12px 14px;border-radius:var(--r);margin-bottom:13px;}
+.mc label{font-weight:600;font-size:13px;white-space:nowrap;}
+.mc input[type=range]{flex:1;accent-color:var(--teal);}
+.mb{font-family:"IBM Plex Mono",monospace;font-weight:700;font-size:17px;color:var(--navy);min-width:46px;text-align:right;}
+.scrollable{max-height:320px;overflow-y:auto;}
+.notice{background:linear-gradient(90deg,#e6f6fa,#fff);border-left:3px solid var(--teal);padding:9px 13px;font-size:12px;color:var(--g600);border-radius:0 var(--r) var(--r) 0;margin-bottom:13px;}
+.pso{color:var(--green);font-weight:600;}
+.pse{color:var(--red);font-weight:600;}
+@media print{.header,.nav,.tab:not(#tab-offerte),.ph{display:none!important;}
+  #tab-offerte{display:block!important;padding:0;}.op2{border:none;box-shadow:none;}.card{box-shadow:none;}.btn{display:none!important;}}
+
+/* Controlescherm */
+.ctrl-bar-bg{background:#e8f4f8;border-radius:3px;height:7px;flex:1;}
+.ctrl-bar-fill{background:var(--teal);border-radius:3px;height:7px;transition:width .3s;}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-brand">
+    <div style="background:var(--teal);color:#fff;font-weight:800;font-size:20px;padding:4px 10px;border-radius:5px;letter-spacing:-1px;">AVI</div>
+    <div>
+      <div class="header-title">Calculatiemodule</div>
+      <div class="header-sub">AVI Volendam — Kostprijsberekening &nbsp;·&nbsp; <span style="font-size:10px;opacity:.7;font-family:'IBM Plex Mono',monospace;">v3.0 · mei 2026</span></div>
+    </div>
+  </div>
+  <div class="header-date" id="headerDate"></div>
+</div>
+<div class="nav">
+  <button class="nav-btn active" onclick="showTab('dashboard',this)">🏠 Dashboard</button>
+  <button class="nav-btn" onclick="showTab('calculatie',this)">📐 Calculatie</button>
+  <button class="nav-btn" onclick="showTab('offerte',this)">📄 Offerte</button>
+  <button class="nav-btn" onclick="showTab('stamdata',this)">⚙ Stamdata</button>
+</div>
+<div class="wrap">
+
+<!-- ══ DASHBOARD ══ -->
+<div id="tab-dashboard" class="tab active">
+  <div class="card">
+    <div class="ch">Selecteer een product</div>
+    <div class="cb">
+      <div class="pg">
+        <div class="pc ap" onclick="selectProduct('beugelzakken',this)">
+          <div class="ic">🛒</div><div class="nm">Beugelzakken<br><small style="font-weight:400;color:var(--g400);">& Bagloaderzakken</small></div>
+        </div>
+        <div class="pc" onclick="selectProduct('bodemseal',this)">
+          <div class="ic">🍞</div><div class="nm">Bodemseal Groot</div>
+        </div>
+        <div class="pc" onclick="selectProduct('zakken-op-rol',this)">
+          <div class="ic">🎞️</div><div class="nm">Zakken op rol</div>
+        </div>
+        <div class="pc" onclick="selectProduct('buisfolie',this)">
+          <div class="ic">🧻</div><div class="nm">Buisfolie</div>
+        </div>
+        <div class="pc" onclick="selectProduct('zijseal',this)">
+          <div class="ic">📦</div><div class="nm">Zijsealzakken</div>
+        </div>
+      </div>
+      <button class="btn bp" style="padding:10px 24px;font-size:14px;" onclick="startNewCalc()">➕ Nieuwe calculatie starten</button>
+    </div>
+  </div>
+  <div class="card">
+    <div class="ch">Offerteoverzicht <button class="btn bs sm" onclick="exportOffertes()">⬇ Export CSV</button></div>
+    <div class="cb" style="padding-bottom:0;">
+      <div class="fr">
+        <input type="text" id="filter-search" placeholder="Zoek op klant…" oninput="renderOfferteTable()">
+        <select id="filter-status" onchange="renderOfferteTable()">
+          <option value="">Alle statussen</option>
+          <option value="concept">Concept</option><option value="verstuurd">Verstuurd</option>
+          <option value="gewonnen">Gewonnen</option><option value="verloren">Verloren</option>
+        </select>
+      </div>
+    </div>
+    <div class="ow">
+      <table class="dt">
+        <thead><tr><th>Nr.</th><th>Datum</th><th>Klant</th><th>Product</th><th class="nr">Totaal</th><th>Status</th><th class="ac"></th></tr></thead>
+        <tbody id="offers-tbody"></tbody>
+      </table>
+      <div id="offers-empty" style="padding:26px;text-align:center;color:var(--g400);display:none;">Nog geen offertes opgeslagen.</div>
+    </div>
+  </div>
+</div>
+<div class="mo" id="status-modal">
+  <div class="md">
+    <h3>Offerte bijwerken</h3>
+    <input type="hidden" id="modal-offer-id">
+    <div class="f"><label>Status</label>
+      <select id="modal-status">
+        <option value="concept">Concept</option><option value="verstuurd">Verstuurd</option>
+        <option value="gewonnen">Gewonnen</option><option value="verloren">Verloren</option>
+      </select></div>
+    <div class="f"><label>Follow-up datum</label><input type="date" id="modal-followup"></div>
+    <div class="f"><label>Notitie</label><textarea id="modal-notitie" placeholder="Interne notitie…"></textarea></div>
+    <div class="mf">
+      <button class="btn bs" onclick="closeModal()">Annuleren</button>
+      <button class="btn bp" onclick="saveModalStatus()">Opslaan</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ CALCULATIE ══ -->
+<div id="tab-calculatie" class="tab">
+  <!-- GEDEELD: klantgegevens + mix -->
+  <div class="g2">
+    <div class="card">
+      <div class="ch">Klantgegevens</div>
+      <div class="cb">
+        <div class="g2">
+          <div class="f"><label>Bedrijfsnaam</label><input type="text" id="c_bedrijf" placeholder="Klantnaam"></div>
+          <div class="f"><label>Contactpersoon</label><input type="text" id="c_contact" placeholder="Naam"></div>
+          <div class="f"><label>Referentie / artnr</label><input type="text" id="c_ref" placeholder="Z230260001"></div>
+          <div class="f"><label>Omschrijving</label><input type="text" id="c_omschrijving" placeholder="Product omschrijving"></div>
+          <div class="f"><label>Type klant</label>
+            <div class="rg">
+              <label><input type="radio" name="handelaar" value="n" checked onchange="calcCurrent()"> Algemeen</label>
+              <label><input type="radio" name="handelaar" value="j" onchange="calcCurrent()"> Handelaar</label>
+            </div>
+          </div>
+          <div class="f"><label>Zending</label>
+            <div class="rg">
+              <label><input type="radio" name="verzend" value="nl" checked onchange="calcCurrent()"> NL</label>
+              <label><input type="radio" name="verzend" value="be" onchange="calcCurrent()"> BE</label>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="ch">Materiaalsamenstelling <button class="btn bs sm" style="color:#fff;border-color:rgba(255,255,255,.3);" onclick="addMixRow()">+ Regel</button></div>
+      <div class="cb" style="padding:0;">
+        <table class="dt it">
+          <thead><tr><th>Grondstof</th><th class="nr" style="width:75px;">%</th><th class="nr" style="width:65px;">SG</th><th style="width:85px;">€/kg</th><th style="width:34px;"></th></tr></thead>
+          <tbody id="mix-body"></tbody>
+          <tfoot><tr>
+            <td class="lc">Totaal</td>
+            <td class="nr" id="mix-pct-total">0%</td>
+            <td class="nr" id="mix-sg-result">–</td>
+            <td id="mix-price-result">–</td><td></td>
+          </tr></tfoot>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- BEUGELZAKKEN -->
+  <div id="bw-form">
+    <div class="g2">
+      <div class="card">
+        <div class="ch">Afmetingen — Beugelzakken / Bagloader</div>
+        <div class="cb">
+          <div class="g3">
+            <div class="f"><label>Breedte (cm)</label><input type="number" id="p_breedte" step="0.5" oninput="calc()"></div>
+            <div class="f"><label>Lengte (cm)</label><input type="number" id="p_lengte" step="0.5" oninput="calc()"></div>
+            <div class="f"><label>Dikte (mm)</label><input type="number" id="p_dikte" step="0.001" oninput="calc()"></div>
+            <div class="f"><label>Bodemvouw (cm)</label><input type="number" id="p_bodemvouw" step="0.5" oninput="calc()"></div>
+            <div class="f"><label>Klep (cm)</label><input type="number" id="p_klep" step="0.5" oninput="calc()"></div>
+            <div class="f"><label>Blok (cm)</label><input type="number" id="p_blok" step="0.5" value="0" oninput="calc()"></div>
+          </div>
+          <div class="f"><label>Aantal (stuks)</label><input type="number" id="p_aantal" step="1000" oninput="calc()"></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="ch">Opties</div>
+        <div class="cb">
+          <div class="g2">
+            <div class="f"><label>Machinetype</label>
+              <select id="p_machine" onchange="calc()">
+                <option value="auto">Automatisch</option>
+                <option value="enkel">Enkele Wicket</option>
+                <option value="dubbel">Dubbele Wicket</option>
+              </select>
+            </div>
+            <div class="f"><label>Type zak</label>
+              <select id="p_type_zak" onchange="calc()">
+                <option value="bagloader">Bagloaderzak</option>
+                <option value="beugelzak">Beugelzak</option>
+              </select>
+            </div>
+            <div class="f"><label>Kleefstrip</label>
+              <select id="p_kleefstrip" onchange="calc()">
+                <option value="geen">Geen</option>
+                <option value="hersluitbaar">Hersluitbaar</option>
+                <option value="permanent">Permanent</option>
+              </select>
+            </div>
+            <div class="f"><label>PP materiaal</label>
+              <div class="rg">
+                <label><input type="radio" name="pp" value="n" checked onchange="calc()"> Nee</label>
+                <label><input type="radio" name="pp" value="j" onchange="calc()"> Ja</label>
+              </div>
+            </div>
+            <div class="f"><label>Positiedruk</label>
+              <div class="rg">
+                <label><input type="radio" name="positiedruk" value="n" checked id="r_pos_n" onchange="togglePrint()"> Nee</label>
+                <label><input type="radio" name="positiedruk" value="j" id="r_pos_j" onchange="togglePrint()"> Ja</label>
+              </div>
+            </div>
+            <div class="f" id="field-kleuren" style="display:none;"><label>Kleuren</label>
+              <input type="number" id="p_kleuren" step="1" min="1" max="6" value="1" oninput="calc()">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="ch">Calculatie Resultaat — Beugelzakken / Bagloader
+        <div style="display:flex;gap:6px;">
+        <button class="btn bs sm" style="color:#fff;border-color:rgba(255,255,255,.3);" onclick="showControlescherm()">🔍 Controle</button>
+        <button class="btn bs sm" style="color:#fff;border-color:rgba(255,255,255,.3);" onclick="showTab('offerte',document.querySelector('.nav-btn:nth-child(3)'))">→ Offerte</button>
+        </div>
+      </div>
+      <div class="cb">
+        <div class="g2">
+          <div>
+            <div class="st">Gewicht &amp; Materiaal</div>
+            <table class="dt">
+              <tr><td class="lc">Gewicht per stuk (g)</td><td class="nr" id="r_gew_stuk">–</td></tr>
+              <tr><td class="lc">Gewicht/1.000 excl. afval (kg)</td><td class="nr" id="r_gew_1000">–</td></tr>
+              <tr><td class="lc">Gewicht/1.000 incl. afval (kg)</td><td class="nr" id="r_gew_afval">–</td></tr>
+              <tr><td class="lc">Totaal gewicht order (kg)</td><td class="nr" id="r_gew_tot">–</td></tr>
+              <tr><td class="lc">Gemiddeld SG</td><td class="nr" id="r_sg">–</td></tr>
+            </table>
+            <div class="st" style="margin-top:13px;">Machine</div>
+            <table class="dt">
+              <tr><td class="lc">Machinetype</td><td class="nr" id="r_machine_type">–</td></tr>
+              <tr><td class="lc">Sealsnelheid (st/uur)</td><td class="nr" id="r_snelheid">–</td></tr>
+              <tr><td class="lc">Sealuren</td><td class="nr" id="r_uren">–</td></tr>
+            </table>
+          </div>
+          <div>
+            <div class="st">Kostprijsopbouw (€/1.000 stuks)</div>
+            <table class="dt">
+              <tr><td class="lc">Grondstof + afval</td><td class="nr" id="r_k_grond">–</td></tr>
+              <tr><td class="lc">Extrusie + afval</td><td class="nr" id="r_k_extr">–</td></tr>
+              <tr><td class="lc">Sealkosten</td><td class="nr" id="r_k_seal">–</td></tr>
+              <tr><td class="lc">Drukkosten</td><td class="nr" id="r_k_druk">–</td></tr>
+              <tr><td class="lc">Kleefstrip</td><td class="nr" id="r_k_klstr">–</td></tr>
+              <tr><td class="lc">Dozen + handling</td><td class="nr" id="r_k_dozen">–</td></tr>
+              <tr><td class="lc">Energie / diversen</td><td class="nr" id="r_k_energie">–</td></tr>
+              <tr><td class="lc">Pallet + vracht</td><td class="nr" id="r_k_vracht">–</td></tr>
+              <tfoot><tr><td class="lc">KOSTPRIJS/1.000</td><td class="nr" id="r_kostprijs">–</td></tr></tfoot>
+            </table>
+          </div>
+        </div>
+        <div style="margin-top:16px;" class="rh">
+          <div>
+            <div style="font-size:11px;color:rgba(255,255,255,.55);margin-bottom:2px;">KOSTPRIJS PER 1.000 STUKS</div>
+            <div class="mv" id="r_kostprijs_big">–</div>
+            <div class="sub" id="r_kostprijs_sub">–</div>
+          </div>
+          <div style="text-align:right;">
+            <div style="font-size:11px;color:rgba(255,255,255,.55);margin-bottom:2px;">TOTAAL ORDER</div>
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:21px;font-weight:700;" id="r_totaal_order">–</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BODEMSEAL -->
+  <div id="bs-form" style="display:none;">
+    <div class="g2">
+      <div class="card">
+        <div class="ch">Afmetingen — Bodemseal Groot</div>
+        <div class="cb">
+          <div class="g3">
+            <div class="f"><label>Breedte (cm)</label><input type="number" id="bs_breedte" step="0.5" value="45" oninput="calcBS()"></div>
+            <div class="f"><label>Zijvouw (cm)</label><input type="number" id="bs_zijvouw" step="0.5" value="16" oninput="calcBS()"><div class="hint">Eff. breedte = b + 2×zijvouw</div></div>
+            <div class="f"><label>Lengte (cm)</label><input type="number" id="bs_lengte" step="0.5" value="75" oninput="calcBS()"></div>
+            <div class="f"><label>Dikte (mm)</label><input type="number" id="bs_dikte" step="0.001" value="0.035" oninput="calcBS()"></div>
+            <div class="f"><label>Aantal (stuks)</label><input type="number" id="bs_aantal" step="100" value="8800" oninput="calcBS()"></div>
+            <div class="f"><label>Type</label>
+              <div class="rg">
+                <label><input type="radio" name="bs_vellen" value="n" checked onchange="calcBS()"> Zakken (×2)</label>
+                <label><input type="radio" name="bs_vellen" value="j" onchange="calcBS()"> Vellen (×1)</label>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="ch">Opties — Bodemseal</div>
+        <div class="cb">
+          <div class="f"><label>Machine</label>
+            <select id="bs_machine" onchange="calcBS()">
+              <option value="guris">GUR IS BSF 900</option>
+              <option value="a2000">A2000 (Arvor 2000)</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="ch">Calculatie Resultaat — Bodemseal Groot
+        <div style="display:flex;gap:6px;">
+        <button class="btn bs sm" style="color:#fff;border-color:rgba(255,255,255,.3);" onclick="showControlescherm()">🔍 Controle</button>
+        <button class="btn bs sm" style="color:#fff;border-color:rgba(255,255,255,.3);" onclick="showTab('offerte',document.querySelector('.nav-btn:nth-child(3)'))">→ Offerte</button>
+        </div>
+      </div>
+      <div class="cb">
+        <div class="g2">
+          <div><table class="dt">
+            <tr><td class="lc">Effectieve breedte</td><td class="nr" id="bs_r_effb">–</td></tr>
+            <tr><td class="lc">Gewicht/1.000 incl. afval (kg)</td><td class="nr" id="bs_r_gew1000">–</td></tr>
+            <tr><td class="lc">Totaal gewicht (kg)</td><td class="nr" id="bs_r_totkg">–</td></tr>
+            <tr><td class="lc">Machine / snelheid</td><td class="nr" id="bs_r_machine">–</td></tr>
+            <tr><td class="lc">Sealuren (incl. 0.5 opstart)</td><td class="nr" id="bs_r_uren">–</td></tr>
+          </table></div>
+          <div><table class="dt">
+            <tr><td class="lc">Grondstof + afval</td><td class="nr" id="bs_r_grond">–</td></tr>
+            <tr><td class="lc">Extrusie + afval</td><td class="nr" id="bs_r_extr">–</td></tr>
+            <tr><td class="lc">Sealkosten</td><td class="nr" id="bs_r_seal">–</td></tr>
+            <tr><td class="lc">Overige kosten</td><td class="nr" id="bs_r_overig">–</td></tr>
+            <tfoot><tr><td class="lc">KOSTPRIJS/1.000</td><td class="nr" id="bs_r_kp">–</td></tr></tfoot>
+          </table></div>
+        </div>
+        <div style="margin-top:16px;" class="rh">
+          <div><div style="font-size:11px;color:rgba(255,255,255,.55);">KOSTPRIJS PER 1.000</div>
+          <div class="mv" id="bs_r_big">–</div><div class="sub" id="bs_r_sub">–</div></div>
+          <div style="text-align:right;"><div style="font-size:11px;color:rgba(255,255,255,.55);">TOTAAL ORDER</div>
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:21px;font-weight:700;" id="bs_r_totaal">–</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ZAKKEN OP ROL -->
+  <div id="zor-form" style="display:none;">
+    <div class="g2">
+      <div class="card">
+        <div class="ch">Afmetingen — Zakken op rol</div>
+        <div class="cb">
+          <div class="g3">
+            <div class="f"><label>Breedte (cm)</label><input type="number" id="zor_breedte" step="0.5" value="104" oninput="calcZOR()"></div>
+            <div class="f"><label>Zijvouw (cm)</label><input type="number" id="zor_zijvouw" step="0.5" value="15" oninput="calcZOR()"></div>
+            <div class="f"><label>Bodemvouw (cm)</label><input type="number" id="zor_bodemvouw" step="0.5" value="0" oninput="calcZOR()"></div>
+            <div class="f"><label>Lengte (cm)</label><input type="number" id="zor_lengte" step="0.5" value="190" oninput="calcZOR()"></div>
+            <div class="f"><label>Dikte (mm)</label><input type="number" id="zor_dikte" step="0.001" value="0.07" oninput="calcZOR()"></div>
+            <div class="f"><label>Aantal (stuks)</label><input type="number" id="zor_aantal" step="100" value="1000" oninput="calcZOR()"></div>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="ch">Opties — Zakken op rol</div>
+        <div class="cb">
+          <div class="g2">
+            <div class="f"><label>Opening</label>
+              <div class="rg" style="flex-direction:column;gap:5px;">
+                <label><input type="radio" name="zor_opening" value="boven" checked onchange="calcZOR()"> Bovenkant (AMUTEC)</label>
+                <label><input type="radio" name="zor_opening" value="zij" onchange="calcZOR()"> Zijkant (Rollomatic)</label>
+              </div>
+            </div>
+            <div class="f"><label>Max rolgewicht (kg)</label><input type="number" id="zor_rolmax" value="25" oninput="calcZOR()"></div>
+            <div class="f"><label>Kokergewicht (kg/m)</label><input type="number" id="zor_koker_gpm" step="0.1" value="3.5" oninput="calcZOR()"></div>
+            <div class="f"><label>Kokerprijs (€/kg)</label><input type="number" id="zor_koker_prijs" step="0.01" value="0.55" oninput="calcZOR()"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="ch">Calculatie Resultaat — Zakken op rol
+        <div style="display:flex;gap:6px;">
+        <button class="btn bs sm" style="color:#fff;border-color:rgba(255,255,255,.3);" onclick="showControlescherm()">🔍 Controle</button>
+        <button class="btn bs sm" style="color:#fff;border-color:rgba(255,255,255,.3);" onclick="showTab('offerte',document.querySelector('.nav-btn:nth-child(3)'))">→ Offerte</button>
+        </div>
+      </div>
+      <div class="cb">
+        <div class="g2">
+          <div><table class="dt">
+            <tr><td class="lc">Eff. breedte (= b + 2×zijvouw)</td><td class="nr" id="zor_r_effb">–</td></tr>
+            <tr><td class="lc">Gewicht/1.000 incl. afval (kg)</td><td class="nr" id="zor_r_gew">–</td></tr>
+            <tr><td class="lc">Aantal rollen / stuks per rol</td><td class="nr" id="zor_r_rollen">–</td></tr>
+            <tr><td class="lc">Machine / snelheid</td><td class="nr" id="zor_r_machine">–</td></tr>
+            <tr><td class="lc">Sealuren (incl. 0.5 opstart)</td><td class="nr" id="zor_r_uren">–</td></tr>
+          </table></div>
+          <div><table class="dt">
+            <tr><td class="lc">Grondstof + afval</td><td class="nr" id="zor_r_grond">–</td></tr>
+            <tr><td class="lc">Extrusie + afval</td><td class="nr" id="zor_r_extr">–</td></tr>
+            <tr><td class="lc">Sealkosten</td><td class="nr" id="zor_r_seal">–</td></tr>
+            <tr><td class="lc">Kokers</td><td class="nr" id="zor_r_koker">–</td></tr>
+            <tr><td class="lc">Overige</td><td class="nr" id="zor_r_overig">–</td></tr>
+            <tfoot><tr><td class="lc">KOSTPRIJS/1.000</td><td class="nr" id="zor_r_kp">–</td></tr></tfoot>
+          </table></div>
+        </div>
+        <div style="margin-top:16px;" class="rh">
+          <div><div style="font-size:11px;color:rgba(255,255,255,.55);">KOSTPRIJS PER 1.000 STUKS</div>
+          <div class="mv" id="zor_r_big">–</div><div class="sub" id="zor_r_sub">–</div></div>
+          <div style="text-align:right;"><div style="font-size:11px;color:rgba(255,255,255,.55);">TOTAAL ORDER</div>
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:21px;font-weight:700;" id="zor_r_totaal">–</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BUISFOLIE -->
+  <div id="bf-form" style="display:none;">
+    <div class="notice">ℹ️ Buisfolie wordt geprijsd <strong>per kg</strong> en <strong>per 1.000 meter</strong>.</div>
+    <div class="g2">
+      <div class="card">
+        <div class="ch">Specificaties — Buisfolie</div>
+        <div class="cb">
+          <div class="g2">
+            <div class="f"><label>Type</label>
+              <div class="rg">
+                <label><input type="radio" name="bf_type" value="buis" checked onchange="calcBF()"> Buis (×2)</label>
+                <label><input type="radio" name="bf_type" value="folie" onchange="calcBF()"> Folie (×1)</label>
+              </div>
+            </div>
+            <div class="f"><label>Breedte (cm)</label><input type="number" id="bf_breedte" step="0.5" value="25" oninput="calcBF()"></div>
+            <div class="f"><label>Dikte (mm)</label><input type="number" id="bf_dikte" step="0.001" value="0.05" oninput="calcBF()"></div>
+            <div class="f"><label>Totaal gewicht (kg)</label><input type="number" id="bf_kg" step="10" value="1000" oninput="clearBFMtrs();calcBF()"></div>
+            <div class="f"><label>— of — Meters (m)</label><input type="number" id="bf_mtrs" step="100" value="0" oninput="clearBFKg();calcBF()"></div>
+            <div class="f"><label>Meters per rol</label><input type="number" id="bf_mtr_per_rol" step="50" value="1000" oninput="calcBF()"></div>
+            <div class="f"><label>Snijmachine</label>
+              <div class="rg">
+                <label><input type="radio" name="bf_snij" value="j" checked onchange="calcBF()"> Ja</label>
+                <label><input type="radio" name="bf_snij" value="n" onchange="calcBF()"> Nee</label>
+              </div>
+            </div>
+            <div class="f"><label>Snijbanen</label>
+              <select id="bf_banen" onchange="calcBF()">
+                <option value="1">1 baan</option><option value="2">2 banen (×0.80)</option>
+                <option value="3">3 banen (×0.75)</option><option value="5">5 banen (×0.65)</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="ch">Opties — Buisfolie</div>
+        <div class="cb">
+          <div class="g2">
+            <div class="f"><label>Kokergewicht (kg/m)</label><input type="number" id="bf_koker_gpm" step="0.1" value="3.5" oninput="calcBF()"></div>
+            <div class="f"><label>Kokerprijs (€/kg)</label><input type="number" id="bf_koker_prijs" step="0.01" value="0.70" oninput="calcBF()"></div>
+            <div class="f"><label>Marge voor verkoopprijs (%)</label><input type="number" id="bf_marge" step="0.5" value="10" oninput="calcBF()"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="ch">Calculatie Resultaat — Buisfolie
+        <div style="display:flex;gap:6px;">
+        <button class="btn bs sm" style="color:#fff;border-color:rgba(255,255,255,.3);" onclick="showControlescherm()">🔍 Controle</button>
+        <button class="btn bs sm" style="color:#fff;border-color:rgba(255,255,255,.3);" onclick="showTab('offerte',document.querySelector('.nav-btn:nth-child(3)'))">→ Offerte</button>
+        </div>
+      </div>
+      <div class="cb">
+        <div class="g2">
+          <div><table class="dt">
+            <tr><td class="lc">Gewicht per 1.000 m (kg)</td><td class="nr" id="bf_r_gew1000m">–</td></tr>
+            <tr><td class="lc">Totaal gewicht / meters</td><td class="nr" id="bf_r_totals">–</td></tr>
+            <tr><td class="lc">Afval %</td><td class="nr" id="bf_r_afval">–</td></tr>
+            <tr><td class="lc">Aantal rollen</td><td class="nr" id="bf_r_rollen">–</td></tr>
+            <tr><td class="lc">Snijsnelheid / uren</td><td class="nr" id="bf_r_speed">–</td></tr>
+          </table></div>
+          <div><table class="dt">
+            <tr><td class="lc">Grondstof + afval (€/kg)</td><td class="nr" id="bf_r_grond">–</td></tr>
+            <tr><td class="lc">Extrusie + afval (€/kg)</td><td class="nr" id="bf_r_extr">–</td></tr>
+            <tr><td class="lc">Snijkosten (€/kg)</td><td class="nr" id="bf_r_snij">–</td></tr>
+            <tr><td class="lc">Kokers (€/kg)</td><td class="nr" id="bf_r_koker">–</td></tr>
+            <tr><td class="lc">Overige (€/kg)</td><td class="nr" id="bf_r_overig">–</td></tr>
+            <tfoot><tr><td class="lc">KOSTPRIJS / kg</td><td class="nr" id="bf_r_kp_kg">–</td></tr></tfoot>
+          </table></div>
+        </div>
+        <div style="margin-top:16px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;">
+          <div class="rh" style="padding:13px 15px;">
+            <div><div style="font-size:10px;color:rgba(255,255,255,.55);">KOSTPRIJS / KG</div>
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:22px;font-weight:700;color:var(--teal);" id="bf_r_kp_big">–</div></div>
+          </div>
+          <div class="rh" style="padding:13px 15px;">
+            <div><div style="font-size:10px;color:rgba(255,255,255,.55);">KOSTPRIJS / 1.000 M</div>
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:22px;font-weight:700;color:var(--teal);" id="bf_r_kp_1000m">–</div></div>
+          </div>
+          <div class="rh" style="padding:13px 15px;">
+            <div><div style="font-size:10px;color:rgba(255,255,255,.55);">VERKOOPPRIJS / KG</div>
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:22px;font-weight:700;color:var(--teal);" id="bf_r_vp">–</div>
+            <div style="font-size:11px;color:rgba(255,255,255,.5);" id="bf_r_totaal">–</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ZIJSEALZAKKEN -->
+  <div id="zs-form" style="display:none;">
+    <div class="g2">
+      <div class="card">
+        <div class="ch">Afmetingen — Zijsealzakken</div>
+        <div class="cb">
+          <div class="g3">
+            <div class="f"><label>Breedte (cm)</label><input type="number" id="zs_breedte" step="0.5" value="26" oninput="calcZS()"><div class="hint">Printex: 9.5–75 · Lemo: 16–51</div></div>
+            <div class="f"><label>Lengte (cm)</label><input type="number" id="zs_lengte" step="0.5" value="40" oninput="calcZS()"></div>
+            <div class="f"><label>Dikte (mm)</label><input type="number" id="zs_dikte" step="0.001" value="0.05" oninput="calcZS()"><div class="hint">≤0.10 Printex/Lemo · &gt;0.10 Pr92</div></div>
+            <div class="f"><label>Klep (cm)</label><input type="number" id="zs_klep" step="0.5" value="4" oninput="calcZS()"></div>
+            <div class="f"><label>Blok (cm)</label><input type="number" id="zs_blok" step="0.5" value="0" oninput="calcZS()"></div>
+            <div class="f"><label>Bodemvouw (cm)</label><input type="number" id="zs_bodemvouw" step="0.5" value="0" oninput="calcZS()"></div>
+            <div class="f"><label>Aantal (stuks)</label><input type="number" id="zs_aantal" step="500" value="10000" oninput="calcZS()"><div class="hint">&lt;10.000 → factor 0.7</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="ch">Opties — Zijsealzakken</div>
+        <div class="cb">
+          <div class="g2">
+            <div class="f"><label>Machine</label>
+              <select id="zs_machine" onchange="calcZS()">
+                <option value="auto">Automatisch</option>
+                <option value="printex">Printex zijseal</option>
+                <option value="lemo">Lemo zijseal</option>
+                <option value="pr92">Printex 92</option>
+              </select>
+            </div>
+            <div class="f"><label>Kleefstrip</label>
+              <select id="zs_kleefstrip" onchange="calcZS()">
+                <option value="geen">Geen</option>
+                <option value="permanent">Permanent (€28.55/1000m)</option>
+                <option value="hersluitbaar">Hersluitbaar (€17.88/1000m)</option>
+              </select>
+            </div>
+            <div class="f"><label>Positiedruk</label>
+              <div class="rg">
+                <label><input type="radio" name="zs_druk" value="n" checked onchange="calcZS()"> Nee</label>
+                <label><input type="radio" name="zs_druk" value="j" onchange="calcZS()"> Ja</label>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="ch">Calculatie Resultaat — Zijsealzakken
+        <div style="display:flex;gap:6px;">
+        <button class="btn bs sm" style="color:#fff;border-color:rgba(255,255,255,.3);" onclick="showControlescherm()">🔍 Controle</button>
+        <button class="btn bs sm" style="color:#fff;border-color:rgba(255,255,255,.3);" onclick="showTab('offerte',document.querySelector('.nav-btn:nth-child(3)'))">→ Offerte</button>
+        </div>
+      </div>
+      <div class="cb">
+        <div class="g2">
+          <div><table class="dt">
+            <tr><td class="lc">Gewicht per stuk (g)</td><td class="nr" id="zs_r_gew_stuk">–</td></tr>
+            <tr><td class="lc">Gewicht/1.000 incl. afval (kg)</td><td class="nr" id="zs_r_gew1000">–</td></tr>
+            <tr><td class="lc">Totaal gewicht (kg)</td><td class="nr" id="zs_r_totkg">–</td></tr>
+            <tr><td class="lc">Machine</td><td class="nr" id="zs_r_machine">–</td></tr>
+            <tr><td class="lc">Basissnelheid (tabel)</td><td class="nr" id="zs_r_base">–</td></tr>
+            <tr><td class="lc">Hoeveelheidsfactor</td><td class="nr" id="zs_r_factor">–</td></tr>
+            <tr><td class="lc">Effectieve snelheid (st/uur)</td><td class="nr" id="zs_r_speed">–</td></tr>
+            <tr><td class="lc">Sealuren (incl. 0.5 opstart)</td><td class="nr" id="zs_r_uren">–</td></tr>
+          </table></div>
+          <div><table class="dt">
+            <tr><td class="lc">Grondstof + afval</td><td class="nr" id="zs_r_grond">–</td></tr>
+            <tr><td class="lc">Extrusie + afval</td><td class="nr" id="zs_r_extr">–</td></tr>
+            <tr><td class="lc">Sealkosten (€50/uur)</td><td class="nr" id="zs_r_seal">–</td></tr>
+            <tr><td class="lc">Kleefstrip</td><td class="nr" id="zs_r_kleef">–</td></tr>
+            <tr><td class="lc">Overige kosten</td><td class="nr" id="zs_r_overig">–</td></tr>
+            <tfoot><tr><td class="lc">KOSTPRIJS/1.000</td><td class="nr" id="zs_r_kp">–</td></tr></tfoot>
+          </table></div>
+        </div>
+        <div style="margin-top:16px;" class="rh">
+          <div><div style="font-size:11px;color:rgba(255,255,255,.55);">KOSTPRIJS PER 1.000 STUKS</div>
+          <div class="mv" id="zs_r_big">–</div><div class="sub" id="zs_r_sub">–</div></div>
+          <div style="text-align:right;"><div style="font-size:11px;color:rgba(255,255,255,.55);">TOTAAL ORDER</div>
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:21px;font-weight:700;" id="zs_r_totaal">–</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div><!-- /tab-calculatie -->
+
+<!-- ══ OFFERTE ══ -->
+<div id="tab-offerte" class="tab">
+  <div class="g2">
+    <div class="card ph">
+      <div class="ch">Margeinstelling</div>
+      <div class="cb">
+        <div class="mc">
+          <label>Marge</label>
+          <input type="range" id="marge_slider" min="0" max="50" step="0.5" value="10" oninput="updateMarge()">
+          <div class="mb" id="marge_display">10%</div>
+        </div>
+        <div class="f"><label>Exact invoeren (%)</label>
+          <input type="number" id="marge_input" step="0.5" min="0" max="100" value="10" oninput="updateMargeInput()">
+        </div>
+        <table class="dt" style="margin-top:10px;">
+          <tr><td class="lc">Kostprijs per 1.000</td><td class="nr" id="o_kostprijs">–</td></tr>
+          <tr><td class="lc">Marge per 1.000</td><td class="nr" id="o_marge_bedrag">–</td></tr>
+          <tr><td class="lc" style="font-weight:700;">Verkoopprijs per 1.000</td><td class="nr" style="font-weight:700;color:var(--navy);" id="o_verkoop">–</td></tr>
+          <tr><td class="lc">Totaal orderbedrag</td><td class="nr" id="o_totaal">–</td></tr>
+        </table>
+        <div class="f" style="margin-top:12px;"><label>Offertenummer</label>
+          <input type="text" id="o_nummer" placeholder="AVI-2026-001">
+        </div>
+        <div class="f"><label>Levertijd (weken)</label>
+          <input type="number" id="o_levertijd" step="1" min="1" value="3">
+        </div>
+      </div>
+    </div>
+    <div class="card ph">
+      <div class="ch">Offerte-instellingen</div>
+      <div class="cb">
+        <div class="f"><label>Taal</label>
+          <div class="rg">
+            <label><input type="radio" name="offtaal" value="nl" checked onchange="renderOfferte()"> NL</label>
+            <label><input type="radio" name="offtaal" value="de" onchange="renderOfferte()"> DE</label>
+            <label><input type="radio" name="offtaal" value="en" onchange="renderOfferte()"> EN</label>
+          </div>
+        </div>
+        <div class="f"><label>Prijs weergave</label>
+          <div class="rg">
+            <label><input type="radio" name="prijs_display" value="per1000" checked onchange="renderOfferte()"> Per 1.000</label>
+            <label><input type="radio" name="prijs_display" value="totaal" onchange="renderOfferte()"> Totaal</label>
+          </div>
+        </div>
+        <div class="f"><label>Afronden</label>
+          <div class="rg">
+            <label><input type="radio" name="afronden" value="0" checked onchange="renderOfferte()"> Geen</label>
+            <label><input type="radio" name="afronden" value="0.5" onchange="renderOfferte()"> 0,50</label>
+            <label><input type="radio" name="afronden" value="1" onchange="renderOfferte()"> €1,–</label>
+          </div>
+        </div>
+        <div style="margin-top:13px;display:flex;gap:7px;flex-wrap:wrap;">
+          <button class="btn bp" onclick="saveOfferte()">💾 Opslaan</button>
+          <button class="btn bs" onclick="window.print()">🖨 Afdrukken</button>
+          <button class="btn bs" onclick="renderOfferte()">↻ Vernieuwen</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="ch">Offerte Preview</div>
+    <div id="offerte-output" class="op2"></div>
+  </div>
+</div>
+
+<!-- ══ STAMDATA ══ -->
+<div id="tab-stamdata" class="tab">
+  <div class="notice">Stamdata worden lokaal opgeslagen. Wijzigingen zijn direct zichtbaar in de Calculatie.</div>
+  <div style="margin-bottom:12px;display:flex;gap:8px;">
+    <button class="btn bs sm" onclick="exportStamdata()">⬇ Export instellingen</button>
+    <button class="btn bs sm" onclick="document.getElementById('import-sd').click()">⬆ Import instellingen</button>
+    <input type="file" id="import-sd" accept=".json" style="display:none" onchange="importStamdata(this)">
+  </div>
+  <div class="g2">
+    <div class="card" style="grid-column:1/-1;">
+      <div class="ch">Grondstoffen / Additieven
+        <button class="btn bs sm" style="color:#fff;border-color:rgba(255,255,255,.3);" onclick="addGrondstof()">+ Toevoegen</button>
+      </div>
+      <div class="cb" style="padding:0;">
+        <div class="scrollable">
+          <table class="dt it">
+            <thead><tr><th style="width:40px;">#</th><th>Naam</th><th style="width:100px;">SG</th><th style="width:110px;">€/kg</th><th style="width:60px;"></th></tr></thead>
+            <tbody id="grondstoffen-body"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="ch">Enkele Wicket – Snelheden &amp; Tarief</div>
+      <div class="cb">
+        <div class="g2">
+          <div class="f"><label>≤ 25.000 st (st/uur)</label><input type="number" id="ew_s1" step="100"></div>
+          <div class="f"><label>25.001–50.000 (st/uur)</label><input type="number" id="ew_s2" step="100"></div>
+          <div class="f"><label>&gt; 50.000 (st/uur)</label><input type="number" id="ew_s3" step="100"></div>
+          <div class="f"><label>Machineprijs (€/uur)</label><input type="number" id="ew_prijs" step="1"></div>
+          <div class="f"><label>Factor PP</label><input type="number" id="ew_ppfactor" step="0.01"><div class="hint">bijv. 0.90</div></div>
+          <div class="f"><label>Factor dikte &gt;0.05mm</label><input type="number" id="ew_diktefactor" step="0.01"></div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="ch">Dubbele Wicket – Snelheden &amp; Tarief</div>
+      <div class="cb">
+        <div class="g2">
+          <div class="f"><label>≤ 25.000 st (st/uur)</label><input type="number" id="dw_s1" step="100"></div>
+          <div class="f"><label>25.001–50.000 (st/uur)</label><input type="number" id="dw_s2" step="100"></div>
+          <div class="f"><label>&gt; 50.000 (st/uur)</label><input type="number" id="dw_s3" step="100"></div>
+          <div class="f"><label>Machineprijs (€/uur)</label><input type="number" id="dw_prijs" step="1"></div>
+          <div class="f"><label>Factor PP</label><input type="number" id="dw_ppfactor" step="0.01"></div>
+          <div class="f"><label>Factor dikte &gt;0.05mm</label><input type="number" id="dw_diktefactor" step="0.01"></div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="ch">Extrusie- &amp; Materiaalkosten</div>
+      <div class="cb">
+        <div class="g2">
+          <div class="f"><label>Extrusieprijs handelaar (€/kg)</label><input type="number" id="extr_handel" step="0.01"></div>
+          <div class="f"><label>Extrusieprijs algemeen (€/kg)</label><input type="number" id="extr_alg" step="0.01"></div>
+          <div class="f"><label>Afval percentage (%)</label><input type="number" id="afval_pct" step="0.5"><div class="hint">Standaard 15%</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="ch">Overige Kosten (per kg)</div>
+      <div class="cb">
+        <div class="g2">
+          <div class="f"><label>Dozen (€/kg)</label><input type="number" id="k_dozen" step="0.01"></div>
+          <div class="f"><label>Handling (€/kg)</label><input type="number" id="k_handling" step="0.01"></div>
+          <div class="f"><label>Energie (€/kg)</label><input type="number" id="k_energie" step="0.01"></div>
+          <div class="f"><label>Pallet (€/pallet)</label><input type="number" id="k_pallet" step="1"></div>
+          <div class="f"><label>Vracht NL (€/pallet)</label><input type="number" id="k_vracht_nl" step="1"></div>
+          <div class="f"><label>Vracht BE (€/pallet)</label><input type="number" id="k_vracht_be" step="1"></div>
+          <div class="f"><label>Max pallet (kg)</label><input type="number" id="k_pallet_max_kg" step="50"></div>
+          <div class="f"><label>Kleefstrip hersluitbaar (€/1000m)</label><input type="number" id="k_klstr_h" step="0.5"></div>
+          <div class="f"><label>Kleefstrip permanent (€/1000m)</label><input type="number" id="k_klstr_p" step="0.5"></div>
+        </div>
+      </div>
+    </div>
+    <div class="card" style="grid-column:1/-1;">
+      <div class="ch">Drukmachines</div>
+      <div class="cb">
+        <div class="g3">
+          <div>
+            <div class="st">Machine 1</div>
+            <div class="f"><label>Naam</label><input type="text" id="d1_naam"></div>
+            <div class="f"><label>Snelheid (m/uur)</label><input type="number" id="d1_speed" step="10"></div>
+            <div class="f"><label>Tarief (€/uur)</label><input type="number" id="d1_prijs" step="1"></div>
+            <div class="f"><label>Insteltijd/kleur (min)</label><input type="number" id="d1_setup" step="5"></div>
+          </div>
+          <div>
+            <div class="st">Machine 2</div>
+            <div class="f"><label>Naam</label><input type="text" id="d2_naam"></div>
+            <div class="f"><label>Snelheid (m/uur)</label><input type="number" id="d2_speed" step="10"></div>
+            <div class="f"><label>Tarief (€/uur)</label><input type="number" id="d2_prijs" step="1"></div>
+            <div class="f"><label>Insteltijd/kleur (min)</label><input type="number" id="d2_setup" step="5"></div>
+          </div>
+          <div>
+            <div class="st">Machine 3 (Columbus)</div>
+            <div class="f"><label>Naam</label><input type="text" id="d3_naam"></div>
+            <div class="f"><label>Snelheid (m/uur)</label><input type="number" id="d3_speed" step="10"></div>
+            <div class="f"><label>Tarief (€/uur)</label><input type="number" id="d3_prijs" step="1"></div>
+            <div class="f"><label>Insteltijd/kleur (min)</label><input type="number" id="d3_setup" step="5"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div style="text-align:right;margin-top:4px;">
+    <button class="btn bp" onclick="saveStamdata()">💾 Stamdata opslaan</button>
+    <button class="btn bs" style="margin-left:8px;" onclick="resetStamdata()">↩ Fabrieksinstellingen</button>
+  </div>
+</div>
+
+
+<!-- CONTROLESCHERM MODAL -->
+<div class="mo" id="ctrl-modal">
+  <div class="md" style="max-width:600px;">
+    <h3>🔍 Controlescherm — Kostenoverzicht</h3>
+    <div class="g3" style="gap:10px;margin-bottom:14px;" id="ctrl-stats">
+      <div style="background:var(--g100);border-radius:var(--r);padding:9px 12px;">
+        <div style="font-size:10px;color:var(--g400);text-transform:uppercase;letter-spacing:.5px;">Machine</div>
+        <div style="font-weight:600;font-size:13px;" id="ctrl-machine">–</div>
+      </div>
+      <div style="background:var(--g100);border-radius:var(--r);padding:9px 12px;">
+        <div style="font-size:10px;color:var(--g400);text-transform:uppercase;letter-spacing:.5px;">Snelheid</div>
+        <div style="font-weight:600;font-size:13px;" id="ctrl-speed">–</div>
+      </div>
+      <div style="background:var(--g100);border-radius:var(--r);padding:9px 12px;">
+        <div style="font-size:10px;color:var(--g400);text-transform:uppercase;letter-spacing:.5px;">Afval %</div>
+        <div style="font-weight:600;font-size:13px;" id="ctrl-afval">–</div>
+      </div>
+    </div>
+    <table class="dt" style="border-top:2px solid var(--g200);">
+      <thead>
+        <tr>
+          <th>Kostenpost</th>
+          <th class="nr" style="width:110px;">€ / 1.000 st</th>
+          <th class="nr" style="width:55px;">%</th>
+          <th style="width:130px;padding-left:10px;">Aandeel</th>
+        </tr>
+      </thead>
+      <tbody id="ctrl-tbody"></tbody>
+      <tfoot>
+        <tr>
+          <td class="lc">Kostprijs totaal</td>
+          <td class="nr" id="ctrl-kp" colspan="3">–</td>
+        </tr>
+      </tfoot>
+    </table>
+    <div style="margin-top:10px;font-size:12px;color:var(--g400);border-top:1px solid var(--g200);padding-top:8px;">
+      <strong>Per kg:</strong> <span id="ctrl-per-kg">–</span>
+    </div>
+    <div class="mf">
+      <button class="btn bp" onclick="document.getElementById('ctrl-modal').classList.remove('op')">Sluiten</button>
+    </div>
+  </div>
+</div>
+
+</div><!-- /wrap -->
+<script>
+// ════════════ STAMDATA ════════════
+const DEF={grondstoffen:[
+  {id:1,naam:"LDPE (icis)",sg:0.93,prijs:2.53},{id:2,naam:"Groen 78784",sg:1.00,prijs:6.76},
+  {id:3,naam:"Groen 680271",sg:1.00,prijs:7.70},{id:4,naam:"AS Roze 620",sg:0.98,prijs:12.27},
+  {id:5,naam:"Geel 610188",sg:1.10,prijs:8.75},{id:6,naam:"VISTAMAX",sg:0.862,prijs:3.10},
+  {id:7,naam:"Beige 6027E",sg:1.50,prijs:3.50},{id:8,naam:"Violet 4022",sg:1.08,prijs:9.42},
+  {id:9,naam:"Rood 5330",sg:1.10,prijs:7.14},{id:10,naam:"Rood 603335",sg:1.24,prijs:5.66},
+  {id:11,naam:"Roze 5080",sg:1.15,prijs:5.16},{id:12,naam:"Oranje",sg:1.53,prijs:11.78},
+  {id:13,naam:"Blauw 605004",sg:1.39,prijs:5.55},{id:14,naam:"D22 Carbomax",sg:2.00,prijs:1.09},
+  {id:15,naam:"Ivoor 9035",sg:1.50,prijs:6.17},{id:16,naam:"Grijs 605177",sg:1.50,prijs:4.67},
+  {id:17,naam:"Wit 7024",sg:1.75,prijs:4.71},{id:18,naam:"Krijt 8989",sg:1.90,prijs:0.76},
+  {id:19,naam:"Zwart 4881",sg:1.14,prijs:3.25},{id:20,naam:"Anti block 50203",sg:0.92,prijs:4.36},
+  {id:21,naam:"Proces Aid 60004",sg:0.925,prijs:3.98},{id:22,naam:"Anti-UV 4718",sg:0.96,prijs:7.30},
+  {id:23,naam:"Anti-UV 3946",sg:0.95,prijs:8.15},{id:24,naam:"Bruin",sg:1.43,prijs:13.87},
+  {id:25,naam:"Zilver",sg:1.13,prijs:4.27},{id:26,naam:"AMF 715",sg:0.91,prijs:3.31},
+  {id:27,naam:"Exeed 1327KD",sg:0.927,prijs:2.63},{id:28,naam:"Enable 2705HH",sg:0.927,prijs:2.63},
+  {id:29,naam:"Vlamvertrager",sg:1.13,prijs:23.35}],
+  machines:{enkel:{s1:8000,s2:10000,s3:12000,prijs:55,ppFactor:0.9,dikteFactor:0.75},
+            dubbel:{s1:8000,s2:9000,s3:10000,prijs:55,ppFactor:0.9,dikteFactor:0.75}},
+  extrusie:{handel:1.60,alg:1.80,afvalPct:15,breedte:100},
+  kosten:{dozen:0.10,handling:0.02,energie:0.04,pallet:9,vrachtNL:0,vrachtBE:0,
+          palletMaxKg:500,klstrHerslt:22,klstrPerm:34},
+  druk:{d1:{naam:"Druk 1",speed:80,prijs:90,setup:30},
+        d2:{naam:"Druk 2",speed:100,prijs:95,setup:30},
+        d3:{naam:"Columbus",speed:120,prijs:100,setup:30}}};
+
+let SD=loadSD(),calcResult=null,currentProduct="beugelzakken";
+let offertes=loadOffertes(),mixRows=[],nextGsId=SD.grondstoffen.reduce((m,g)=>Math.max(m,g.id),0)+1;
+
+function loadSD(){try{const s=localStorage.getItem("avi_stamdata");return s?JSON.parse(s):JSON.parse(JSON.stringify(DEF));}catch(e){return JSON.parse(JSON.stringify(DEF));}}
+function saveSDLocal(){localStorage.setItem("avi_stamdata",JSON.stringify(SD));}
+function loadOffertes(){try{const s=localStorage.getItem("avi_offertes");return s?JSON.parse(s):[];}catch(e){return[];}}
+function saveOffertes(){localStorage.setItem("avi_offertes",JSON.stringify(offertes));}
+
+// ════════════ HELPERS ════════════
+function sv(id,v){const e=document.getElementById(id);if(e)e.value=v;}
+function nv(id){const e=document.getElementById(id);return e?+e.value:0;}
+function tv(id){const e=document.getElementById(id);return e?e.value:"";}
+function st(id,v){const e=document.getElementById(id);if(e)e.textContent=v;}
+function esc(s){return String(s).replace(/&/g,"&amp;").replace(/"/g,"&quot;").replace(/</g,"&lt;");}
+function f0(n){return Number(n).toLocaleString("nl-NL",{maximumFractionDigits:0});}
+function f1(n){return Number(n).toLocaleString("nl-NL",{minimumFractionDigits:1,maximumFractionDigits:1});}
+function f2(n){return Number(n).toLocaleString("nl-NL",{minimumFractionDigits:2,maximumFractionDigits:2});}
+function f3(n){return Number(n).toLocaleString("nl-NL",{minimumFractionDigits:3,maximumFractionDigits:3});}
+function f4(n){return Number(n).toLocaleString("nl-NL",{minimumFractionDigits:4,maximumFractionDigits:4});}
+function rq(sel){return document.querySelector(sel);}
+
+// ════════════ NAVIGATIE ════════════
+function showTab(id,btn){
+  document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));
+  document.querySelectorAll(".nav-btn").forEach(b=>b.classList.remove("active"));
+  document.getElementById("tab-"+id).classList.add("active");
+  const b=btn||(typeof event!=="undefined"&&event?.target)||null;
+  if(b?.classList)b.classList.add("active");
+  if(id==="offerte")renderOfferte();
+  if(id==="dashboard")renderOfferteTable();
+}
+function selectProduct(p,el){
+  currentProduct=p;
+  document.querySelectorAll(".pc").forEach(c=>c.classList.remove("ap"));
+  if(el)el.classList.add("ap");
+}
+function startNewCalc(){
+  showProductForm();
+  showTab("calculatie",document.querySelector(".nav-btn:nth-child(2)"));
+  setTimeout(calcCurrent,60);
+}
+function showProductForm(){
+  ["bw-form","bs-form","zor-form","bf-form","zs-form"].forEach(id=>{
+    const e=document.getElementById(id);if(e)e.style.display="none";
+  });
+  const map={beugelzakken:"bw-form",bodemseal:"bs-form","zakken-op-rol":"zor-form",buisfolie:"bf-form",zijseal:"zs-form"};
+  const el=document.getElementById(map[currentProduct]||"bw-form");
+  if(el)el.style.display="";
+}
+function calcCurrent(){
+  const fn={beugelzakken:calc,bodemseal:calcBS,"zakken-op-rol":calcZOR,buisfolie:calcBF,zijseal:calcZS};
+  (fn[currentProduct]||calc)();
+}
+
+// ════════════ MIX ════════════
+function addMixRow(){mixRows.push({gsId:"",pct:0,customPrijs:undefined});renderMix();}
+function setMixRow(i,gsId,pct){if(i<mixRows.length){mixRows[i]={gsId,pct,customPrijs:undefined};renderMix();}}
+function renderMix(){
+  const tb=document.getElementById("mix-body");if(!tb)return;
+  tb.innerHTML="";
+  mixRows.forEach((row,i)=>{
+    const gs=SD.grondstoffen.find(g=>g.id===row.gsId);
+    const ep=row.customPrijs!==undefined?row.customPrijs:(gs?gs.prijs:0);
+    const tr=document.createElement("tr");
+    tr.innerHTML=`<td><select style="width:100%;font-family:'IBM Plex Mono',monospace;font-size:11px;padding:3px 5px;border:1px solid #ccdde4;border-radius:4px;background:#f4f8fa;"
+      onchange="updateMixRow(${i},'gsId',+this.value)">
+      <option value="">– selecteer –</option>
+      ${SD.grondstoffen.map(g=>`<option value="${g.id}" ${g.id===row.gsId?"selected":""}>${g.id}. ${g.naam}</option>`).join("")}
+    </select></td>
+    <td><input type="number" value="${row.pct||""}" step="0.5" min="0" max="100"
+      style="width:100%;font-family:'IBM Plex Mono',monospace;font-size:12px;padding:3px 5px;border:1px solid #ccdde4;border-radius:4px;background:#f4f8fa;text-align:right;"
+      onchange="updateMixRow(${i},'pct',+this.value)"></td>
+    <td class="nr" style="font-size:12px;">${gs?gs.sg.toFixed(3):"–"}</td>
+    <td><input type="number" value="${ep?ep.toFixed(2):""}" step="0.01" placeholder="${gs?gs.prijs.toFixed(2):"–"}"
+      style="width:80px;font-family:'IBM Plex Mono',monospace;font-size:12px;padding:3px 5px;border:1px solid #ccdde4;border-radius:4px;background:#fff;text-align:right;"
+      oninput="updateMixRow(${i},'customPrijs',this.value===''?undefined:+this.value)"></td>
+    <td class="ac"><button class="btn bd sm" onclick="removeMixRow(${i})">×</button></td>`;
+    tb.appendChild(tr);
+  });
+  updateMixTotals();
+}
+function updateMixRow(i,f,v){mixRows[i][f]=v;renderMix();calcCurrent();}
+function removeMixRow(i){mixRows.splice(i,1);renderMix();calcCurrent();}
+function rebuildMixSelects(){renderMix();}
+function updateMixTotals(){
+  const active=mixRows.filter(r=>r.gsId&&r.pct>0);
+  const total=active.reduce((s,r)=>s+r.pct,0);
+  const pt=document.getElementById("mix-pct-total");
+  if(pt){pt.textContent=f2(total)+"%";pt.className=Math.abs(total-100)<0.01?"pso":"pse";}
+  if(total>0){
+    const sgD=active.reduce((s,r)=>{const g=SD.grondstoffen.find(x=>x.id===r.gsId);return g?s+r.pct/g.sg:s;},0);
+    const sg=total/sgD;
+    const sgEl=document.getElementById("mix-sg-result");if(sgEl)sgEl.textContent=f3(sg);
+    const gp=active.reduce((s,r)=>{const g=SD.grondstoffen.find(x=>x.id===r.gsId);const p=r.customPrijs!==undefined?r.customPrijs:(g?g.prijs:0);return g?s+(r.pct/100)*p:s;},0);
+    const gpEl=document.getElementById("mix-price-result");if(gpEl)gpEl.textContent="€ "+f3(gp);
+  }else{
+    const sgEl=document.getElementById("mix-sg-result");if(sgEl)sgEl.textContent="–";
+    const gpEl=document.getElementById("mix-price-result");if(gpEl)gpEl.textContent="–";
+  }
+}
+function getMixProps(){
+  const active=mixRows.filter(r=>r.gsId&&r.pct>0);
+  const total=active.reduce((s,r)=>s+r.pct,0);
+  if(Math.abs(total-100)>0.1)return null;
+  const sgD=active.reduce((s,r)=>{const g=SD.grondstoffen.find(x=>x.id===r.gsId);return g?s+r.pct/g.sg:s;},0);
+  const sg=total/sgD;
+  const gp=active.reduce((s,r)=>{const g=SD.grondstoffen.find(x=>x.id===r.gsId);const p=r.customPrijs!==undefined?r.customPrijs:(g?g.prijs:0);return g?s+(r.pct/100)*p:s;},0);
+  return{sg_avg:sg,grondstofprijs:gp};
+}
+function getOtherCosts(gewicht_kg,n,g1000,isBe){
+  const k=SD.kosten;
+  const kd=g1000*k.dozen,kh=g1000*k.handling,ke=g1000*k.energie;
+  const aP=Math.ceil(gewicht_kg/k.palletMaxKg)||1;
+  const vp=isBe?k.vrachtBE:k.vrachtNL;
+  const kv=(k.pallet*aP+vp*aP)/n*1000;
+  return{k_dozen:kd,k_handling:kh,k_energie:ke,k_pallet:kv,aantPallets:aP};
+}
+function isHandel(){return rq("input[name=handelaar]:checked")?.value==="j";}
+function isBelgie(prefix){return rq("input[name="+(prefix||"verzend")+"]:checked")?.value==="be";}
+
+// ════════════ CALC BEUGELZAKKEN ════════════
+function togglePrint(){
+  const on=document.getElementById("r_pos_j")?.checked;
+  const e=document.getElementById("field-kleuren");if(e)e.style.display=on?"":"none";
+  calc();
+}
+function calc(){
+  const b=nv("p_breedte"),l=nv("p_lengte"),d=nv("p_dikte");
+  const bv=nv("p_bodemvouw"),kl=nv("p_klep"),bl=nv("p_blok"),n=nv("p_aantal");
+  if(!b||!l||!d||!n)return;
+  const mix=getMixProps();if(!mix){st("r_kostprijs_big","Mix ≠ 100%");return;}
+  const{sg_avg,grondstofprijs}=mix;
+  const gew=(b/100)*((l/100)+(kl/200)+(bl/200)+(bv/100))*(d*2)*n*sg_avg;
+  const g1000=gew/n*1000;
+  const afval=SD.extrusie.afvalPct;
+  const extr=isHandel()?SD.extrusie.handel:SD.extrusie.alg;
+  const gIncl=g1000*(1+afval/100);
+  const pp=rq("input[name=pp]:checked")?.value==="j";
+  const mTyp=tv("p_machine");
+  let type=mTyp==="auto"?(d>=0.05||pp?"enkel":(n>50000?"dubbel":"enkel")):mTyp;
+  const m=type==="dubbel"?SD.machines.dubbel:SD.machines.enkel;
+  let spd=n<=25000?m.s1:(n<=50000?m.s2:m.s3);
+  if(pp&&type==="enkel")spd=Math.round(spd*m.ppFactor);
+  if(d>0.05)spd=Math.round(spd*m.dikteFactor);
+  const seal1000=(1000/spd)*m.prijs;
+  const isBe=rq("input[name=verzend]:checked")?.value==="be";
+  const{k_dozen,k_handling,k_energie,k_pallet,aantPallets}=getOtherCosts(gew,n,g1000,isBe);
+  const kGrond=g1000*grondstofprijs*(1+afval/100);
+  const kExtr=g1000*extr*(1+afval/100);
+  let kDruk=0;
+  if(rq("input[name=positiedruk]:checked")?.value==="j"){
+    const kl2=nv("p_kleuren")||1,dm=SD.druk.d1;
+    const fmtr=n*(b/100);
+    kDruk=(fmtr/dm.speed+kl2*(dm.setup/60))*dm.prijs/n*1000;
+  }
+  const ks=tv("p_kleefstrip");
+  let kKlstr=ks==="hersluitbaar"?b*SD.kosten.klstrHerslt/100:ks==="permanent"?b*SD.kosten.klstrPerm/100:0;
+  const kp=kGrond+kExtr+seal1000+kDruk+kKlstr+k_dozen+k_handling+k_energie+k_pallet;
+  calcResult={breedte:b,lengte:l,dikte:d,bodemvouw:bv,klep:kl,blok:bl,aantal:n,
+    sg_avg,grondstofprijs,gew_per_1000:g1000,gew_incl_afval:gIncl,gewicht_kg:gew,
+    machine:type==="dubbel"?"Dubbele Wicket":"Enkele Wicket",speed:spd,sealPer1000:seal1000,
+    afvalPct:afval,k_grond_afval:kGrond,k_extr_afval:kExtr,k_druk:kDruk,k_kleefstrip:kKlstr,
+    k_dozen,k_handling,k_energie,k_pallet,kostprijs:kp,extrPrijs:extr,aantPallets};
+  st("r_gew_stuk",f4(gew/n*1000)+" g");st("r_gew_1000",f3(g1000)+" kg");
+  st("r_gew_afval",f3(gIncl)+" kg");st("r_gew_tot",f2(gew)+" kg");st("r_sg",f4(sg_avg));
+  st("r_machine_type",calcResult.machine);st("r_snelheid",f0(spd)+" st/uur");
+  st("r_uren",f2(n/spd)+" uur");
+  st("r_k_grond","€ "+f3(kGrond));st("r_k_extr","€ "+f3(kExtr));
+  st("r_k_seal","€ "+f3(seal1000));st("r_k_druk","€ "+f3(kDruk));
+  st("r_k_klstr",kKlstr>0?"€ "+f3(kKlstr):"–");
+  st("r_k_dozen","€ "+f3(k_dozen+k_handling));
+  st("r_k_energie","€ "+f3(k_energie));st("r_k_vracht","€ "+f3(k_pallet));
+  st("r_kostprijs","€ "+f3(kp));st("r_kostprijs_big","€ "+f3(kp));
+  st("r_kostprijs_sub",f3(g1000)+" kg/1000 · "+calcResult.machine+" · "+f0(spd)+" st/uur");
+  st("r_totaal_order","€ "+f2(kp*n/1000));
+  updateOffertePrices();
+}
+
+// ════════════ BODEMSEAL ════════════
+const GURIS_L=[15,25,40,55,70,95,120,145,170,200,250,300];
+const GURIS_S=[7800,7800,7800,7800,6857,5053,4000,3310,2824,2400,1920,1600];
+const A2D=[0.02,0.03,0.04,0.05,0.06,0.07,0.08,0.09,0.10,0.11,0.12,0.135,0.15,0.175];
+const A2L=[70,90,105,120,135,150,165,180,200,225,250];
+const A2T=[[1600,1600,1575,1550,1500,1450,1400,1350,1250,1150,1100],[1775,1775,1735,1700,1600,1500,1400,1650,1300,1250,1150],[1900,1850,1800,1750,1700,1650,1575,1500,1400,1300,1200],[1900,1850,1800,1750,1700,1650,1575,1500,1400,1300,1200],[1900,1850,1800,1750,1700,1650,1575,1500,1400,1300,1200],[1800,1770,1710,1650,1600,1550,1475,1400,1325,1225,1150],[1700,1690,1620,1550,1500,1450,1475,1300,1250,1175,1100],[1575,1550,1460,1425,1400,1470,1280,1200,1150,1075,1000],[1450,1400,1350,1300,1295,1290,1190,1100,1050,975,900],[1350,1250,1210,1175,1170,1170,1070,1000,950,875,825],[1225,1175,1125,1075,1060,1050,975,925,875,800,750],[1100,1050,1000,950,935,925,875,825,775,725,675],[1000,950,900,850,825,800,775,750,700,650,600],[925,875,825,775,735,700,675,650,600,560,525]];
+const DF=[[0.015,0.7],[0.02,0.8],[0.025,0.9],[0.03,1.0],[0.035,0.95],[0.04,0.9],[0.045,0.85],[0.05,0.8],[0.055,0.75],[0.06,0.7],[0.065,0.65],[0.07,0.6],[0.075,0.58],[0.08,0.56],[0.085,0.54],[0.09,0.52],[0.095,0.5],[0.1,0.48],[0.11,0.44],[0.12,0.4],[0.13,0.38],[0.14,0.36],[0.15,0.34],[0.16,0.32],[0.17,0.3],[0.18,0.28],[0.19,0.26],[0.2,0.24]];
+function getDF(ed){let f=DF[0][1];for(const[d,v]of DF){if(ed>=d)f=v;else break;}return f;}
+function getGURIS(l){let s=GURIS_S[0];for(let i=0;i<GURIS_L.length;i++){if(l<=GURIS_L[i]){s=GURIS_S[i];break;}if(i===GURIS_L.length-1)s=GURIS_S[i];}return s;}
+function getA2000(ed,l){
+  let di=0;for(let i=0;i<A2D.length;i++){if(ed>=A2D[i])di=i;else break;}
+  let li=0;for(let i=0;i<A2L.length;i++){if(l<=A2L[i]){li=i;break;}if(i===A2L.length-1)li=i;}
+  return A2T[di][li];
+}
+function calcBS(){
+  const b=nv("bs_breedte"),zv=nv("bs_zijvouw"),l=nv("bs_lengte"),d=nv("bs_dikte"),n=nv("bs_aantal");
+  if(!b||!l||!d||!n)return;
+  const mix=getMixProps();if(!mix){st("bs_r_big","Mix ≠ 100%");return;}
+  const{sg_avg,grondstofprijs}=mix;
+  const effB=b+2*zv,effD=zv>0?d*2:d;
+  const vellen=rq("input[name=bs_vellen]:checked")?.value==="j";
+  const gew=(effB/100)*(l/100)*(d*(vellen?1:2))*n*sg_avg;
+  const g1000=gew/n*1000,afval=SD.extrusie.afvalPct;
+  const extr=isHandel()?SD.extrusie.handel:SD.extrusie.alg;
+  const gIncl=g1000*(1+afval/100);
+  const kGrond=g1000*grondstofprijs*(1+afval/100);
+  const kExtr=g1000*extr*(1+afval/100);
+  const vf=getDF(effD);
+  const useA2=tv("bs_machine")==="a2000";
+  const spd=Math.max((useA2?getA2000(effD,l):getGURIS(l))*vf,1);
+  const machineName=useA2?"A2000 (Arvor 2000)":"GUR IS BSF 900";
+  const sealUren=n/spd;
+  const kSeal=(sealUren+0.5)*55/n*1000;
+  const isBe=rq("input[name=bs_belgie]:checked")?.value==="be";
+  const{k_dozen,k_handling,k_energie,k_pallet}=getOtherCosts(gew,n,g1000,isBe);
+  const kOverig=k_dozen+k_handling+k_energie+k_pallet;
+  const kp=kGrond+kExtr+kSeal+kOverig;
+  calcResult={breedte:b,zijvouw:zv,breedte_eff:effB,lengte:l,dikte:d,aantal:n,
+    sg_avg,grondstofprijs,gew_per_1000:g1000,gew_incl_afval:gIncl,gewicht_kg:gew,
+    machine:machineName,speed:spd,sealPer1000:kSeal,afvalPct:afval,
+    k_grond_afval:kGrond,k_extr_afval:kExtr,k_druk:0,k_kleefstrip:0,
+    k_dozen,k_handling,k_energie,k_pallet,kostprijs:kp,extrPrijs:extr};
+  st("bs_r_effb",effB+" cm (= "+b+" + 2×"+zv+")");
+  st("bs_r_gew1000",f3(gIncl)+" kg/1000");
+  st("bs_r_totkg",f2(gew*(1+afval/100))+" kg");
+  st("bs_r_machine",machineName+" | "+f0(spd)+" st/uur | factor "+f3(vf));
+  st("bs_r_uren",f2(sealUren)+" + 0.5 = "+f2(sealUren+0.5)+" uur");
+  st("bs_r_grond","€ "+f3(kGrond));st("bs_r_extr","€ "+f3(kExtr));
+  st("bs_r_seal","€ "+f3(kSeal));st("bs_r_overig","€ "+f3(kOverig));
+  st("bs_r_kp","€ "+f3(kp));st("bs_r_big","€ "+f3(kp));
+  st("bs_r_sub",effB+"×"+l+"×"+d+"mm · "+f0(n)+" st · "+machineName);
+  st("bs_r_totaal","€ "+f2(kp*n/1000));
+  updateOffertePrices();
+}
+
+// ════════════ ZAKKEN OP ROL ════════════
+const RF=[[0.01,1.14],[0.014,1.12],[0.018,1.10],[0.022,1.08],[0.026,1.06],[0.03,1.04],[0.034,1.02],[0.038,1.00],[0.042,0.98],[0.046,0.96],[0.05,0.94],[0.054,0.92],[0.058,0.90],[0.062,0.88],[0.066,0.86],[0.07,0.84],[0.074,0.82],[0.078,0.80],[0.082,0.78],[0.086,0.76],[0.09,0.74],[0.094,0.72],[0.098,0.70],[0.102,0.68],[0.106,0.66],[0.11,0.64],[0.114,0.62],[0.118,0.60],[0.122,0.58],[0.126,0.54],[0.13,0.50],[0.134,0.46],[0.138,0.42],[0.142,0.38],[0.146,0.34],[0.15,0.30]];
+function getRF(ed){let f=RF[0][1];for(const[d,v]of RF){if(ed>=d)f=v;else break;}return f;}
+function getRitsSpeed(bMPM,l,ed,maxS){return Math.min(bMPM*100/l*60*getRF(ed),maxS);}
+function calcZOR(){
+  const b=nv("zor_breedte"),zv=nv("zor_zijvouw"),bv=nv("zor_bodemvouw");
+  const l=nv("zor_lengte"),d=nv("zor_dikte"),n=nv("zor_aantal");
+  if(!b||!l||!d||!n)return;
+  const mix=getMixProps();if(!mix){st("zor_r_big","Mix ≠ 100%");return;}
+  const{sg_avg,grondstofprijs}=mix;
+  const effB=b+2*zv,effD=zv>0?d*2:d;
+  const gew=(effB/100)*((l+bv)/100)*(d*2)*n*sg_avg;
+  const g1000=gew/n*1000,afval=SD.extrusie.afvalPct;
+  const extr=isHandel()?SD.extrusie.handel:SD.extrusie.alg;
+  const gIncl=g1000*(1+afval/100);
+  const kGrond=g1000*grondstofprijs*(1+afval/100);
+  const kExtr=g1000*extr*(1+afval/100);
+  const opening=rq("input[name=zor_opening]:checked")?.value||"boven";
+  let spd,machineName;
+  if(opening==="boven"){spd=getRitsSpeed(90,l,effD,13200);machineName="AMUTEC (bovenkant)";}
+  else{spd=getRitsSpeed(74,l,effD,6400);machineName="Rollomatic (zijkant)";}
+  spd=Math.max(spd,1);
+  const sealUren=n/spd,kSeal=(sealUren+0.5)*55/n*1000;
+  const rolMax=nv("zor_rolmax")||25;
+  const kgpm=nv("zor_koker_gpm")||3.5,kprijs=nv("zor_koker_prijs")||0.55;
+  const nettoRol=rolMax-kgpm*(effB/100);
+  const aantR=Math.max(1,Math.round(gew/nettoRol));
+  const stPerRol=n/aantR;
+  const kKoker=aantR*(effB/100)*kgpm*kprijs/n*1000;
+  const isBe=rq("input[name=zor_belgie]:checked")?.value==="be";
+  const{k_dozen,k_handling,k_energie,k_pallet}=getOtherCosts(gew,n,g1000,isBe);
+  const kOverig=k_dozen+k_handling+k_energie+k_pallet;
+  const kp=kGrond+kExtr+kSeal+kKoker+kOverig;
+  calcResult={breedte:b,zijvouw:zv,breedte_eff:effB,lengte:l,dikte:d,bodemvouw:bv,aantal:n,
+    sg_avg,grondstofprijs,gew_per_1000:g1000,gew_incl_afval:gIncl,gewicht_kg:gew,
+    machine:machineName,speed:spd,sealPer1000:kSeal,afvalPct:afval,
+    k_grond_afval:kGrond,k_extr_afval:kExtr,k_druk:0,k_kleefstrip:0,
+    k_dozen,k_handling,k_energie,k_pallet,kostprijs:kp,extrPrijs:extr};
+  st("zor_r_effb",effB+" cm (= "+b+" + 2×"+zv+")");
+  st("zor_r_gew",f3(gIncl)+" kg/1000");
+  st("zor_r_rollen",f0(aantR)+" rollen | "+f1(stPerRol)+" st/rol");
+  st("zor_r_machine",machineName+" | "+f0(spd)+" st/uur");
+  st("zor_r_uren",f2(sealUren)+" + 0.5 = "+f2(sealUren+0.5)+" uur");
+  st("zor_r_grond","€ "+f3(kGrond));st("zor_r_extr","€ "+f3(kExtr));
+  st("zor_r_seal","€ "+f3(kSeal));st("zor_r_koker","€ "+f3(kKoker));
+  st("zor_r_overig","€ "+f3(kOverig));st("zor_r_kp","€ "+f3(kp));
+  st("zor_r_big","€ "+f3(kp));
+  st("zor_r_sub",effB+"×"+l+"×"+d+"mm · "+f0(aantR)+" rollen · "+machineName);
+  st("zor_r_totaal","€ "+f2(kp*n/1000));
+  updateOffertePrices();
+}
+
+// ════════════ BUISFOLIE ════════════
+const BFS=[[50,1100],[110,2200],[250,3500],[500,5100],[1000,6900],[2000,8000],[Infinity,8500]];
+const BFB={1:1.0,2:0.80,3:0.75,5:0.65};
+function getBFSpd(kg){return(BFS.find(([m])=>kg<=m)||BFS.at(-1))[1];}
+function getBFdf(d){return d<0.05?1.1:d<0.10?1.0:d<0.15?0.9:0.5;}
+function getBFkf(kg){return kg<200?0.9:kg>=4000?1.2:kg>=1500?1.1:1.0;}
+function clearBFKg(){sv("bf_kg","0");}
+function clearBFMtrs(){sv("bf_mtrs","0");}
+function calcBF(){
+  const b=nv("bf_breedte"),d=nv("bf_dikte");if(!b||!d)return;
+  const mix=getMixProps();if(!mix){st("bf_r_kp_big","Mix ≠ 100%");return;}
+  const{sg_avg,grondstofprijs}=mix;
+  const isBuis=rq("input[name=bf_type]:checked")?.value!=="folie";
+  const g1000m=(b/100)*d*sg_avg*1000*(isBuis?2:1);
+  let totKg=nv("bf_kg"),totMtrs=nv("bf_mtrs");
+  if(totKg>0)totMtrs=totKg/g1000m*1000;
+  else if(totMtrs>0)totKg=totMtrs*g1000m/1000;
+  else return;
+  const afval=SD.extrusie.afvalPct;
+  const extr=isHandel()?SD.extrusie.handel:SD.extrusie.alg;
+  const kGrond=grondstofprijs*(1+afval/100),kExtr=extr*(1+afval/100);
+  const doSnij=rq("input[name=bf_snij]:checked")?.value==="j";
+  let kSnij=0,spd=0,snijUren=0;
+  if(doSnij){
+    const banen=+tv("bf_banen")||1;
+    spd=getBFSpd(totKg)*getBFdf(d)*getBFkf(totKg)*(BFB[banen]||1)*banen;
+    snijUren=totMtrs/spd;kSnij=(snijUren+0.15)*55/totKg;
+  }
+  const mpr=nv("bf_mtr_per_rol")||1000,kgpm=nv("bf_koker_gpm")||3.5,kp2=nv("bf_koker_prijs")||0.70;
+  const aantR=Math.ceil(totMtrs/mpr);
+  const kKoker=aantR*(b/100)*kgpm*kp2/totKg;
+  const isBe=rq("input[name=bf_belgie]:checked")?.value==="be";
+  const k=SD.kosten;
+  const aP=Math.ceil(totKg/k.palletMaxKg)||1;
+  const vp2=isBe?k.vrachtBE:k.vrachtNL;
+  const kOverig=k.handling+k.energie+(k.pallet*aP+vp2*aP)/totKg;
+  const kpKg=kGrond+kExtr+kSnij+kKoker+kOverig;
+  const marge=nv("bf_marge")||10;
+  const vpKg=kpKg*(1+marge/100);
+  const kp1000m=kpKg*g1000m;
+  calcResult={breedte:b,lengte:100,dikte:d,aantal:Math.round(totKg),isBuisfolie:true,
+    sg_avg,grondstofprijs,gew_per_1000:g1000m,gew_incl_afval:g1000m*(1+afval/100),
+    gewicht_kg:totKg,machine:"Snijmachine",speed:spd,sealPer1000:kSnij*1000,
+    afvalPct:afval,kostprijs:kpKg*1000,extrPrijs:extr,
+    k_grond_afval:kGrond*1000,k_extr_afval:kExtr*1000,k_druk:0,k_kleefstrip:0,
+    k_dozen:kOverig*1000,k_handling:0,k_energie:0,k_pallet:0};
+  st("bf_r_gew1000m",f3(g1000m)+" kg/1000m");st("bf_r_totals",f1(totKg)+" kg | "+f0(totMtrs)+" m");
+  st("bf_r_afval",f0(afval)+"%");st("bf_r_rollen",f0(aantR)+" rollen × "+f0(mpr)+"m");
+  st("bf_r_speed",doSnij?f0(spd)+" m/uur | "+f2(snijUren)+" uur":"Geen snijmachine");
+  st("bf_r_grond","€ "+f4(kGrond)+"/kg");st("bf_r_extr","€ "+f4(kExtr)+"/kg");
+  st("bf_r_snij",doSnij?"€ "+f4(kSnij)+"/kg":"–");
+  st("bf_r_koker","€ "+f4(kKoker)+"/kg");st("bf_r_overig","€ "+f4(kOverig)+"/kg");
+  st("bf_r_kp_kg","€ "+f4(kpKg)+"/kg");st("bf_r_kp_big","€ "+f4(kpKg));
+  st("bf_r_kp_1000m","€ "+f2(kp1000m));st("bf_r_vp","€ "+f4(vpKg));
+  st("bf_r_totaal","Totaal: € "+f2(totKg*vpKg));
+  updateOffertePrices();
+}
+
+// ════════════ ZIJSEALZAKKEN ════════════
+// Printex zijseal: dikte 0.02–0.10, breedte 9.5–75
+const ZPD=[0.02,0.03,0.04,0.05,0.06,0.07,0.08,0.09,0.10];
+const ZPB=[9.5,13,16,18.5,21,26,31,36,41,51,61,75];
+const ZPT=[[6800,6650,6500,6300,6100,5700,5000,4300,3700,2800,2200,1500],[6600,6400,6200,6000,5850,5550,4800,4100,3500,2600,2150,1300],[6350,6175,6000,5825,5650,5400,4600,3900,3400,2400,2150,1300],[6200,6000,5800,5650,5500,5300,4200,3500,3100,2100,1850,1000],[6050,5850,5650,5475,5300,5000,4100,3350,3000,2000,1750,900],[5900,5700,5500,5300,5100,4700,4000,3200,2900,1900,1650,800],[5800,5600,5200,5050,4900,4500,3900,3000,2400,1800,1300,700],[5650,5350,5050,4925,4800,4375,3800,3100,2400,1700,1150,600],[5500,5250,4900,4800,4700,4250,3700,2800,2000,1500,1000,500]];
+// Lemo: dikte 0.02–0.10, breedte 16–51
+const ZLD=[0.02,0.03,0.04,0.05,0.06,0.07,0.08,0.09,0.10];
+const ZLB=[16,18.5,21,26,31,36,41,51];
+const ZLT=[[6500,6300,6100,5700,5000,4300,3700,2800],[6200,6000,5850,5550,4800,4100,3500,2600],[6000,5825,5650,5400,4600,3900,3400,2400],[5800,5650,5500,5300,4200,3500,3100,2100],[5650,5475,5300,5000,4100,3350,3000,2000],[5500,5300,5100,4700,4000,3200,2900,1900],[5200,5050,4900,4500,3900,3000,2400,1800],[5050,4925,4800,4375,3800,3100,2400,1700],[4900,4800,4700,4250,3700,2800,2000,1500]];
+// Printex 92: dikte 0.02–0.20, breedte 9.5–75
+const ZP2D=[0.02,0.03,0.04,0.05,0.06,0.07,0.08,0.09,0.10,0.11,0.12,0.135,0.15,0.20];
+const ZP2B=[9.5,13,16,18.5,21,26,31,36,41,51,61,75];
+const ZP2T=[[7800,7750,7700,7650,7600,7500,7400,7300,7200,7000,6800,6600],[7800,7700,7600,7550,7500,7400,7300,7200,7100,6900,6700,6500],[7600,7500,7400,7350,7300,7200,7100,7000,6900,6700,6500,6200],[7500,7350,7200,7150,7100,7000,6900,6800,6700,6500,6300,6000],[7400,7200,7000,6950,6900,6800,6700,6600,6500,6200,6000,5700],[7000,6825,6650,6600,6550,6400,6300,6200,6100,5900,5700,5400],[6600,6450,6300,6250,6200,6100,6000,5900,5800,5600,5400,5100],[6250,6150,6050,6000,5950,5800,5700,5600,5500,5300,5100,4800],[5900,5850,5800,5750,5700,5600,5500,5400,5300,5100,4900,4600],[4900,5350,5300,5250,5200,5100,5000,4900,4800,4600,4400,4100],[3900,4000,3900,3850,3800,3700,3600,3500,3400,3200,3000,2700],[2900,3000,2900,2850,2800,2700,2600,2500,2400,2200,2000,1800],[2400,2100,2000,1950,1900,1800,1700,1600,1500,1300,1100,900],[2000,1700,1600,1550,1500,1400,1300,1200,1100,900,700,500]];
+function zsLookup(dT,bT,sT,d,b){
+  let di=0;for(let i=0;i<dT.length;i++){if(d>=dT[i])di=i;else break;}
+  let bi=0;for(let i=0;i<bT.length;i++){if(b>=bT[i])bi=i;else break;}
+  return(sT[di]&&sT[di][bi])||0;
+}
+function calcZS(){
+  const b=nv("zs_breedte"),l=nv("zs_lengte"),d=nv("zs_dikte");
+  const kl=nv("zs_klep"),bl=nv("zs_blok"),bv=nv("zs_bodemvouw"),n=nv("zs_aantal");
+  if(!b||!l||!d||!n)return;
+  const mix=getMixProps();if(!mix){st("zs_r_big","Mix ≠ 100%");return;}
+  const{sg_avg,grondstofprijs}=mix;
+  const gew=(b/100)*((l/100)+(kl/200)+(bl/200)+(bv/100))*(d*2)*n*sg_avg;
+  const g1000=gew/n*1000,afval=SD.extrusie.afvalPct;
+  const extr=isHandel()?SD.extrusie.handel:SD.extrusie.alg;
+  const gIncl=g1000*(1+afval/100);
+  const kGrond=g1000*grondstofprijs*(1+afval/100);
+  const kExtr=g1000*extr*(1+afval/100);
+  const mach=tv("zs_machine");
+  const lemoOk=b>=16&&b<=51&&d<=0.10;
+  let baseSpd,machineName;
+  if(mach==="lemo"||(mach==="auto"&&lemoOk)){
+    baseSpd=zsLookup(ZLD,ZLB,ZLT,d,b);machineName="Lemo zijseal";
+  }else if(mach==="pr92"||(mach==="auto"&&d>0.10)){
+    baseSpd=zsLookup(ZP2D,ZP2B,ZP2T,d,b);machineName="Printex 92";
+  }else{
+    baseSpd=zsLookup(ZPD,ZPB,ZPT,d,b);machineName="Printex zijseal";
+  }
+  const vf=n<10000?0.7:1.0;
+  const spd=Math.max(baseSpd*vf,1);
+  const sealUren=n/spd;
+  const kSeal=(sealUren+0.5)*50/n*1000;  // Zijseal: €50/uur
+  const kleef=tv("zs_kleefstrip");
+  const kKleef=kleef==="permanent"?b*28.55/100:kleef==="hersluitbaar"?b*17.88/100:0;
+  const isBe=rq("input[name=zs_belgie]:checked")?.value==="be";
+  const{k_dozen,k_handling,k_energie,k_pallet}=getOtherCosts(gew,n,g1000,isBe);
+  const kOverig=k_dozen+k_handling+k_energie+k_pallet;
+  const kp=kGrond+kExtr+kSeal+kKleef+kOverig;
+  calcResult={breedte:b,lengte:l,dikte:d,klep:kl,blok:bl,bodemvouw:bv,aantal:n,
+    sg_avg,grondstofprijs,gew_per_1000:g1000,gew_incl_afval:gIncl,gewicht_kg:gew,
+    machine:machineName,speed:spd,sealPer1000:kSeal,afvalPct:afval,
+    k_grond_afval:kGrond,k_extr_afval:kExtr,k_druk:0,k_kleefstrip:kKleef,
+    k_dozen,k_handling,k_energie,k_pallet,kostprijs:kp,extrPrijs:extr};
+  st("zs_r_gew_stuk",f4(gew/n*1000)+" g");
+  st("zs_r_gew1000",f3(gIncl)+" kg");st("zs_r_totkg",f2(gew*(1+afval/100))+" kg");
+  st("zs_r_machine",machineName);
+  st("zs_r_base",baseSpd?f0(baseSpd)+" st/uur (tabel)":"0 — buiten bereik");
+  st("zs_r_factor",vf===1?"1.0 (≥10.000 st)":"0.7 (<10.000 st)");
+  st("zs_r_speed",f0(spd)+" st/uur");
+  st("zs_r_uren",f2(sealUren)+" + 0.5 = "+f2(sealUren+0.5)+" uur @€50/uur");
+  st("zs_r_grond","€ "+f3(kGrond));st("zs_r_extr","€ "+f3(kExtr));
+  st("zs_r_seal","€ "+f3(kSeal));
+  st("zs_r_kleef",kKleef>0?"€ "+f3(kKleef):"–");
+  st("zs_r_overig","€ "+f3(kOverig));st("zs_r_kp","€ "+f3(kp));
+  st("zs_r_big","€ "+f3(kp));
+  st("zs_r_sub",b+"×"+l+"×"+d+"mm klep:"+kl+" · "+f0(n)+" st · "+machineName+(kleef!=="geen"?" · "+kleef:""));
+  st("zs_r_totaal","€ "+f2(kp*n/1000));
+  updateOffertePrices();
+}
+
+// ════════════ STAMDATA BEHEER ════════════
+function populateStamdataForm(){
+  const m=SD.machines;
+  sv("ew_s1",m.enkel.s1);sv("ew_s2",m.enkel.s2);sv("ew_s3",m.enkel.s3);
+  sv("ew_prijs",m.enkel.prijs);sv("ew_ppfactor",m.enkel.ppFactor);sv("ew_diktefactor",m.enkel.dikteFactor);
+  sv("dw_s1",m.dubbel.s1);sv("dw_s2",m.dubbel.s2);sv("dw_s3",m.dubbel.s3);
+  sv("dw_prijs",m.dubbel.prijs);sv("dw_ppfactor",m.dubbel.ppFactor);sv("dw_diktefactor",m.dubbel.dikteFactor);
+  sv("extr_handel",SD.extrusie.handel);sv("extr_alg",SD.extrusie.alg);sv("afval_pct",SD.extrusie.afvalPct);
+  const k=SD.kosten;
+  sv("k_dozen",k.dozen);sv("k_handling",k.handling);sv("k_energie",k.energie);sv("k_pallet",k.pallet);
+  sv("k_vracht_nl",k.vrachtNL);sv("k_vracht_be",k.vrachtBE);sv("k_pallet_max_kg",k.palletMaxKg);
+  sv("k_klstr_h",k.klstrHerslt);sv("k_klstr_p",k.klstrPerm);
+  ["d1","d2","d3"].forEach(di=>{
+    sv(di+"_naam",SD.druk[di].naam);sv(di+"_speed",SD.druk[di].speed);
+    sv(di+"_prijs",SD.druk[di].prijs);sv(di+"_setup",SD.druk[di].setup);
+  });
+}
+function saveStamdata(){
+  SD.machines.enkel={s1:nv("ew_s1"),s2:nv("ew_s2"),s3:nv("ew_s3"),prijs:nv("ew_prijs"),ppFactor:nv("ew_ppfactor"),dikteFactor:nv("ew_diktefactor")};
+  SD.machines.dubbel={s1:nv("dw_s1"),s2:nv("dw_s2"),s3:nv("dw_s3"),prijs:nv("dw_prijs"),ppFactor:nv("dw_ppfactor"),dikteFactor:nv("dw_diktefactor")};
+  SD.extrusie={handel:nv("extr_handel"),alg:nv("extr_alg"),afvalPct:nv("afval_pct"),breedte:100};
+  SD.kosten={dozen:nv("k_dozen"),handling:nv("k_handling"),energie:nv("k_energie"),pallet:nv("k_pallet"),vrachtNL:nv("k_vracht_nl"),vrachtBE:nv("k_vracht_be"),palletMaxKg:nv("k_pallet_max_kg"),klstrHerslt:nv("k_klstr_h"),klstrPerm:nv("k_klstr_p")};
+  ["d1","d2","d3"].forEach(di=>{SD.druk[di]={naam:tv(di+"_naam"),speed:nv(di+"_speed"),prijs:nv(di+"_prijs"),setup:nv(di+"_setup")};});
+  saveSDLocal();calcCurrent();alert("Stamdata opgeslagen ✓");
+}
+function resetStamdata(){
+  if(!confirm("Alle stamdata resetten naar fabrieksinstellingen?"))return;
+  SD=JSON.parse(JSON.stringify(DEF));saveSDLocal();populateStamdataForm();renderGrondstoffen();calcCurrent();
+}
+function renderGrondstoffen(){
+  const tb=document.getElementById("grondstoffen-body");if(!tb)return;
+  tb.innerHTML="";
+  SD.grondstoffen.forEach((g,i)=>{
+    const tr=document.createElement("tr");
+    tr.innerHTML=`<td>${g.id}</td>
+      <td><input type="text" value="${esc(g.naam)}" onchange="updateGs(${i},'naam',this.value)"></td>
+      <td><input type="number" value="${g.sg}" step="0.001" onchange="updateGs(${i},'sg',+this.value)"></td>
+      <td><input type="number" value="${g.prijs}" step="0.01" onchange="updateGs(${i},'prijs',+this.value)"></td>
+      <td class="ac"><button class="btn bd sm" onclick="removeGs(${i})">×</button></td>`;
+    tb.appendChild(tr);
+  });
+}
+function updateGs(i,f,v){SD.grondstoffen[i][f]=v;rebuildMixSelects();calcCurrent();}
+function removeGs(i){SD.grondstoffen.splice(i,1);renderGrondstoffen();rebuildMixSelects();calcCurrent();}
+function addGrondstof(){SD.grondstoffen.push({id:nextGsId++,naam:"Nieuw materiaal",sg:1.0,prijs:0});renderGrondstoffen();rebuildMixSelects();}
+function exportStamdata(){const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([JSON.stringify(SD,null,2)],{type:"application/json"}));a.download="avi-stamdata-"+new Date().toISOString().slice(0,10)+".json";a.click();}
+function importStamdata(input){
+  const r=new FileReader();r.onload=e=>{
+    try{const imp=JSON.parse(e.target.result);
+      if(!imp.grondstoffen||!imp.machines){alert("Ongeldig bestand");return;}
+      SD=imp;saveSDLocal();populateStamdataForm();renderGrondstoffen();rebuildMixSelects();alert("Stamdata geladen ✓");}
+    catch(err){alert("Fout: "+err.message);}
+  };r.readAsText(input.files[0]);input.value="";
+}
+
+// ════════════ OFFERTE ════════════
+function updateMarge(){const v=document.getElementById("marge_slider").value;sv("marge_input",v);st("marge_display",v+"%");updateOffertePrices();renderOfferte();}
+function updateMargeInput(){const v=nv("marge_input");sv("marge_slider",v);st("marge_display",v+"%");updateOffertePrices();renderOfferte();}
+function updateOffertePrices(){
+  if(!calcResult)return;
+  const marge=nv("marge_input")||10,kp=calcResult.kostprijs;
+  const mb=kp*marge/100,vp=kp+mb,tot=vp*calcResult.aantal/1000;
+  st("o_kostprijs","€ "+f3(kp));st("o_marge_bedrag","€ "+f3(mb));
+  st("o_verkoop","€ "+f3(vp));st("o_totaal","€ "+f2(tot));
+}
+function getVP(){
+  if(!calcResult)return 0;
+  const marge=nv("marge_input")||10;
+  let vp=calcResult.kostprijs*(1+marge/100);
+  const afr=+rq("input[name=afronden]:checked")?.value||0;
+  if(afr>0)vp=Math.ceil(vp/afr)*afr;
+  return vp;
+}
+function renderOfferte(){
+  updateOffertePrices();
+  const lang=rq("input[name=offtaal]:checked")?.value||"nl";
+  const vp=getVP(),n=calcResult?.aantal||0;
+  const bedrijf=tv("c_bedrijf")||"–",contact=tv("c_contact")||"–";
+  const omschr=tv("c_omschrijving")||"–";
+  const b=calcResult?.breedte||0,zv=calcResult?.zijvouw||0,l=calcResult?.lengte||0,d=calcResult?.dikte||0;
+  const bv=calcResult?.bodemvouw||0,kl=calcResult?.klep||0;
+  const levertijd=nv("o_levertijd")||3;
+  const nr=tv("o_nummer")||"AVI-"+new Date().getFullYear()+"-xxx";
+  const pd=rq("input[name=prijs_display]:checked")?.value||"per1000";
+  const datum=new Date().toLocaleDateString(lang==="en"?"en-GB":lang==="de"?"de-DE":"nl-NL",{day:"2-digit",month:"2-digit",year:"numeric"});
+  const totB=vp*n/1000;
+  const T={nl:{title:"OFFERTE",dear:"Geachte heer/mevrouw,",intro:"Naar aanleiding van uw aanvraag hebben wij het genoegen u vrijblijvend aan te bieden:",w:"breedte",len:"lengte",th:"dikte",fold:"zijvouw",fl:"klep",uq:"stuks",up:"per 1.000 stuks",ltl:"Levertijd",ltv:levertijd+" weken na ontvangst order",btl:"Betalingsconditie",btv:"30 dagen na factuurdatum",dag:"Momenteel hanteren wij dagprijzen.",ex:"Prijzen zijn exclusief BTW.",cl:"Wij danken u voor uw aanvraag.",gr:"Met vriendelijke groet,",our:"Onze ref.:"},de:{title:"ANGEBOT",dear:"Sehr geehrte Damen und Herren,",intro:"Aufgrund Ihrer Anfrage unterbreiten wir Ihnen folgendes Angebot:",w:"Breite",len:"Länge",th:"Dicke",fold:"Seitenfalte",fl:"Lasche",uq:"Stück",up:"pro 1.000 Stück",ltl:"Lieferzeit",ltv:levertijd+" Wochen ab Auftragseingang",btl:"Zahlungsbedingung",btv:"30 Tage nach Rechnungsdatum",dag:"Wir benutzen aktuell Tagespreise.",ex:"Preise sind exklusive MwSt.",cl:"Wir danken Ihnen für Ihre Anfrage.",gr:"Mit freundlichen Grüßen,",our:"Unsere Ref.:"},en:{title:"OFFER",dear:"Dear Sir/Madam,",intro:"Based on your request, we herewith offer you without engagement:",w:"width",len:"length",th:"thickness",fold:"sidefold",fl:"flap",uq:"pieces",up:"per 1,000 pieces",ltl:"Lead time",ltv:levertijd+" weeks from receipt of order",btl:"Payment terms",btv:"30 days after invoice date",dag:"We currently use day prices.",ex:"Prices are exclusive of VAT.",cl:"We look forward to receiving your order.",gr:"Yours sincerely,",our:"Our ref.:"},}[lang];
+  const prStr=pd==="per1000"?"€ "+f3(vp)+" "+T.up:"€ "+f2(totB);
+  const dimStr=zv>0?`${b} cm × ${zv} cm ${T.w}/${T.fold} × ${l} cm ${T.len} × ${d} mm ${T.th}`:`${b} cm ${T.w} × ${l} cm ${T.len} × ${d} mm ${T.th}`;
+  const dimStr2=(zv===0&&bv>0)?"+ "+bv+" cm "+T.fold:"";
+  const dimStr3=kl>0?"+ "+kl+" cm "+T.fl:"";
+  document.getElementById("offerte-output").innerHTML=`
+    <div class="coh">
+      <div>
+        <div style="font-size:15px;font-weight:700;margin-bottom:2px;">${bedrijf}</div>
+        <div style="color:#6b7280;">${contact}</div>
+        <div style="margin-top:10px;font-size:11px;color:#9ca3af;">${T.our} ${nr}</div>
+      </div>
+      <div class="ai">
+        <div class="an">Algemene Verpakkings Industrie bv</div>
+        <div>Parallelweg 2, 1131 DM  Volendam</div>
+        <div>Tel. +31 (0)299-364330 &nbsp;·&nbsp; www.avi-volendam.nl</div>
+        <div style="margin-top:6px;color:#9ca3af;">Volendam, ${datum}</div>
+      </div>
+    </div>
+    <h2>${T.title}</h2>
+    <p>${T.dear}</p><p style="margin-top:6px;">${T.intro}</p>
+    <table class="pt">
+      <thead><tr><th style="width:55%">Omschrijving</th><th style="width:20%;text-align:right;">Hoeveelheid</th><th style="width:25%;text-align:right;">Prijs</th></tr></thead>
+      <tbody><tr>
+        <td><strong>${omschr}</strong><br>
+          <span style="font-size:12px;color:#6b7280;">${dimStr}</span>
+          ${dimStr2?`<br><span style="font-size:12px;color:#6b7280;">${dimStr2}</span>`:""}
+          ${dimStr3?`<br><span style="font-size:12px;color:#6b7280;">${dimStr3}</span>`:""}
+        </td>
+        <td style="text-align:right;vertical-align:top;"><strong style="font-family:'IBM Plex Mono',monospace;">${f0(n)}</strong><br><span style="font-size:11px;color:#6b7280;">${T.uq}</span></td>
+        <td class="pc2" style="vertical-align:top;"><strong style="font-size:14px;">${prStr}</strong></td>
+      </tr></tbody>
+    </table>
+    <p style="font-size:11px;color:#6b7280;">${T.dag} ${T.ex}</p>
+    <table style="margin-top:12px;font-size:13px;">
+      <tr><td style="width:148px;font-weight:600;padding-right:12px;">${T.ltl}</td><td>${T.ltv}</td></tr>
+      <tr><td style="font-weight:600;padding-right:12px;">${T.btl}</td><td>${T.btv}</td></tr>
+    </table>
+    <div style="font-size:12px;color:#6b7280;margin-top:18px;">${T.cl}<br><br>${T.gr}<br><strong>AVI / Algemene Verpakkings Industrie B.V.</strong></div>`;
+}
+
+// ════════════ OFFERTE OPSLAAN ════════════
+function saveOfferte(){
+  if(!calcResult){alert("Voer eerst een calculatie uit.");return;}
+  const bedrijf=tv("c_bedrijf");if(!bedrijf){alert("Vul een bedrijfsnaam in.");return;}
+  const marge=nv("marge_input")||10;
+  const vp=calcResult.kostprijs*(1+marge/100);
+  const tot=vp*calcResult.aantal/1000;
+  let nr=tv("o_nummer").trim();
+  if(!nr){
+    const pfx=bedrijf.substring(0,3).toUpperCase();
+    const yr=new Date().getFullYear();
+    const cnt=offertes.filter(o=>o.nr&&o.nr.startsWith(pfx+"-"+yr)).length;
+    nr=pfx+"-"+yr+"-"+String(cnt+1).padStart(3,"0");sv("o_nummer",nr);
+  }
+  const lbl={beugelzakken:"Beugelzakken",bodemseal:"Bodemseal Groot","zakken-op-rol":"Zakken op rol",buisfolie:"Buisfolie",zijseal:"Zijsealzakken"};
+  const ex=offertes.findIndex(o=>o.nr===nr);
+  const off={id:ex>=0?offertes[ex].id:Date.now(),nr,datum:new Date().toISOString().slice(0,10),bedrijf,contact:tv("c_contact"),
+    product:currentProduct,productLabel:lbl[currentProduct]||currentProduct,
+    kostprijs:calcResult.kostprijs,verkoopprijs:vp,totaal:tot,aantal:calcResult.aantal,
+    status:ex>=0?offertes[ex].status:"concept",followup:ex>=0?offertes[ex].followup:"",notitie:ex>=0?offertes[ex].notitie:""};
+  if(ex>=0)offertes[ex]=off;else offertes.unshift(off);
+  saveOffertes();renderOfferteTable();alert("✓ Offerte "+nr+" opgeslagen!");
+}
+function renderOfferteTable(){
+  const search=(tv("filter-search")||"").toLowerCase();
+  const status=tv("filter-status");
+  const tb=document.getElementById("offers-tbody");
+  const em=document.getElementById("offers-empty");
+  if(!tb)return;
+  const fl=offertes.filter(o=>{
+    if(status&&o.status!==status)return false;
+    if(search&&!o.nr?.toLowerCase().includes(search)&&!o.bedrijf?.toLowerCase().includes(search))return false;
+    return true;
+  });
+  if(!fl.length){tb.innerHTML="";if(em)em.style.display="block";return;}
+  if(em)em.style.display="none";
+  const lb={concept:"Concept",verstuurd:"Verstuurd",gewonnen:"Gewonnen",verloren:"Verloren"};
+  tb.innerHTML=fl.map(o=>{
+    const d=o.datum?o.datum.split("-").reverse().join("-"):"–";
+    return`<tr>
+      <td style="font-weight:600;">${esc(o.nr||"")}</td>
+      <td>${d}</td>
+      <td>${esc(o.bedrijf||"")}</td>
+      <td>${esc(o.productLabel||o.product||"")}</td>
+      <td class="nr">€ ${f2(o.totaal||0)}</td>
+      <td><span class="sb s${o.status||"concept"}">${lb[o.status]||"Concept"}</span></td>
+      <td class="ac">
+        <button class="btn bs sm" onclick="openStatusModal('${o.id}')">&#9998;</button>
+        <button class="btn bd sm" onclick="deleteOfferte('${o.id}')">&#128465;</button>
+      </td></tr>`;
+  }).join("");
+}
+function openStatusModal(id){
+  const o=offertes.find(o=>String(o.id)===String(id));if(!o)return;
+  sv("modal-offer-id",id);document.getElementById("modal-status").value=o.status||"concept";
+  sv("modal-followup",o.followup||"");sv("modal-notitie",o.notitie||"");
+  document.getElementById("status-modal").classList.add("op");
+}
+function closeModal(){document.getElementById("status-modal").classList.remove("op");}
+function saveModalStatus(){
+  const id=tv("modal-offer-id");
+  const idx=offertes.findIndex(o=>String(o.id)===String(id));if(idx<0)return;
+  offertes[idx].status=document.getElementById("modal-status").value;
+  offertes[idx].followup=tv("modal-followup");offertes[idx].notitie=tv("modal-notitie");
+  saveOffertes();closeModal();renderOfferteTable();
+}
+function deleteOfferte(id){
+  if(!confirm("Offerte verwijderen?"))return;
+  offertes=offertes.filter(o=>String(o.id)!==String(id));saveOffertes();renderOfferteTable();
+}
+function exportOffertes(){
+  const hd=["Nr","Datum","Bedrijf","Product","Totaal","Status","Notitie"];
+  const rows=offertes.map(o=>[o.nr,o.datum,o.bedrijf,o.productLabel||o.product,o.totaal?.toFixed(2),o.status,o.notitie].map(v=>`"${(v||"").toString().replace(/"/g,"\"")}"`).join(";"));
+  const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([[hd.join(";"),...rows].join("\n")],{type:"text/csv;charset=utf-8;"}));
+  a.download="avi-offertes-"+new Date().toISOString().slice(0,10)+".csv";a.click();
+}
+document.addEventListener("click",e=>{if(e.target.id==="status-modal")closeModal();});
+
+
+// ════════════ CONTROLESCHERM ════════════
+function showControlescherm(){
+  if(!calcResult){alert("Voer eerst een calculatie uit.");return;}
+  const c=calcResult;
+  const posts=[
+    ["Grondstof + afval",c.k_grond_afval],
+    ["Extrusie + afval", c.k_extr_afval],
+    ["Sealkosten",       c.sealPer1000],
+    ["Drukkosten",       c.k_druk||0],
+    ["Kleefstrip",       c.k_kleefstrip||0],
+    ["Dozen + handling", (c.k_dozen||0)+(c.k_handling||0)],
+    ["Energie/diversen", c.k_energie||0],
+    ["Pallet + vracht",  c.k_pallet||0],
+  ].filter(([,v])=>v>0);
+  const totaal=c.kostprijs;
+  const tbody=document.getElementById("ctrl-tbody");
+  tbody.innerHTML=posts.map(([naam,val])=>{
+    const pct=totaal>0?(val/totaal*100).toFixed(1):0;
+    const breedte=Math.round(Math.min(val/totaal*100,100));
+    return`<tr>
+      <td class="lc">${naam}</td>
+      <td class="nr">€ ${f3(val)}</td>
+      <td class="nr" style="color:var(--g400);font-size:12px;">${pct}%</td>
+      <td style="padding:8px 8px 8px 10px;">
+        <div class="ctrl-bar-bg">
+          <div class="ctrl-bar-fill" style="width:${breedte}%;"></div>
+        </div>
+      </td>
+    </tr>`;
+  }).join("");
+  const gew=c.gew_per_1000||0;
+  document.getElementById("ctrl-kp").textContent="€ "+f3(totaal)+" per 1.000 st";
+  document.getElementById("ctrl-machine").textContent=c.machine||"–";
+  document.getElementById("ctrl-speed").textContent=c.speed?f0(c.speed)+" st/uur":"–";
+  document.getElementById("ctrl-afval").textContent=(c.afvalPct||0)+"%";
+  document.getElementById("ctrl-per-kg").textContent=gew>0?
+    "€ "+f4(totaal/gew)+" / kg  ·  "+f3(gew)+" kg per 1.000 st":"–";
+  document.getElementById("ctrl-modal").classList.add("op");
+}
+
+// ════════════ INIT ════════════
+window.addEventListener("DOMContentLoaded",()=>{
+  document.getElementById("headerDate").textContent=new Date().toLocaleDateString("nl-NL",{day:"2-digit",month:"2-digit",year:"numeric"});
+  populateStamdataForm();
+  renderGrondstoffen();
+  renderOfferteTable();
+  // Standaard mix
+  mixRows=[];addMixRow();addMixRow();
+  setMixRow(0,6,82);setMixRow(1,15,5);
+  addMixRow();setMixRow(2,16,7);
+  addMixRow();setMixRow(3,19,4);
+  addMixRow();setMixRow(4,28,2);
+  // Standaard beugelzak invoer
+  sv("p_breedte",28);sv("p_lengte",44);sv("p_dikte",0.025);
+  sv("p_bodemvouw",4);sv("p_klep",4);sv("p_blok",0);sv("p_aantal",50000);
+  // Toon juiste form en bereken
+  showProductForm();
+  calc();
+  renderOfferte();
+});
+</script>
+</body>
+</html>
